@@ -188,5 +188,5 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 For support or questions:
 - Email: dntwaritag@alustudent.com
-- GitHub: [@dntwaritag](https://github.com/dntwaritag/WeatherWise-Classifier-MLOP/)]
+- GitHub: [@dntwaritag](https://github.com/dntwaritag/WeatherWise-Classifier-MLOP/)
 ```
