@@ -1,0 +1,32 @@
+# Core Requirements
+fastapi==0.95.2
+uvicorn==0.22.0
+
+# Database
+sqlalchemy==2.0.15
+psycopg2-binary==2.9.6
+python-dotenv==1.0.0
+
+# Data Processing
+pandas==2.0.1
+numpy==1.24.3
+
+# Machine Learning
+joblib==1.2.0
+xgboost==1.7.5
+
+# Additional Utilities
+python-multipart==0.0.6
+pydantic==1.10.7
+
+# Core dependencies
+scikit-learn==1.4.1.post1
+tensorflow==2.16.1
+
+# Visualization
+matplotlib==3.8.3
+seaborn==0.13.2
+
+
+# Additional utilities
+python-dateutil==2.8.2

@@ -1,0 +1,7 @@
+setup.py
+weatherwise.egg-info/PKG-INFO
+weatherwise.egg-info/SOURCES.txt
+weatherwise.egg-info/dependency_links.txt
+weatherwise.egg-info/entry_points.txt
+weatherwise.egg-info/requires.txt
+weatherwise.egg-info/top_level.txt

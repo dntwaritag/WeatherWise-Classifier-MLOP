@@ -1,0 +1,2 @@
+[console_scripts]
+weatherwise-train = src.app.main:main

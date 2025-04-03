@@ -1,0 +1,8 @@
+venv/
+myenv
+DB_USER = os.getenv("DB_USER", "seattle_weather_user")
+DB_PASSWORD = os.getenv("DB_PASSWORD", "hS1yirAgqJqyY6Kd6KMgwuKkTEhZInQn")
+DB_HOST = os.getenv("DB_HOST", "dpg-cvmr6sp5pdvs73flesc0-a.oregon-postgres.render.com")
+DB_NAME = os.getenv("DB_NAME", "seattle_weather_user")
+pool_size=int(os.getenv("DB_POOL_SIZE", "5"))
+max_overflow=int(os.getenv("DB_MAX_OVERFLOW", "10"))
