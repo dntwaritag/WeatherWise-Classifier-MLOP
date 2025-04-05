@@ -4,41 +4,40 @@ from pydantic import BaseModel
 import pandas as pd
 import uvicorn
 import os
-import io
+import pickle
 import sys
 from sqlalchemy.orm import Session
-from sqlalchemy.exc import IntegrityError, DataError
 from pathlib import Path
 import uuid
+from typing import Dict, List, Optional
 from datetime import datetime, timedelta
-import joblib
+import io
 import numpy as np
-from fastapi import FastAPI
-from fastapi.responses import FileResponse
-import os
+from tensorflow.keras.models import Sequential, load_model as load_keras_model
+from tensorflow.keras.layers import Dense, Dropout, BatchNormalization
+from tensorflow.keras.optimizers import Adam
 import logging
-from typing import List, Dict, Optional
-from sklearn.model_selection import train_test_split
-
-# Local imports
-from .database import get_db
-from .models import WeatherData
-from src.preprocessing import preprocess_data, generate_lag_features
-from src.model import train_logistic_regression, train_random_forest, train_neural_network
-from src.prediction import predict_weather, load_latest_model
-
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
+import pickle
 
 # Configure logging
 logging.basicConfig(
     level=logging.INFO,
     format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
     handlers=[
-        logging.FileHandler("weather_api.log"),
-        logging.StreamHandler()
+        logging.StreamHandler(),
+        logging.FileHandler('app.log')
     ]
 )
 logger = logging.getLogger(__name__)
+
+# Local imports
+from .database import get_db
+from .models import WeatherData
+from src.preprocessing import preprocess_data, load_prediction_data, fetch_training_data
+from src.model import save_model, evaluate_model
+from src.prediction import predict
+
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..")))
 
 app = FastAPI()
 
@@ -52,280 +51,383 @@ app.add_middleware(
 )
 
 # Constants
-EXPECTED_COLUMNS = ["date", "precipitation", "temp_max", "temp_min", "wind", "weather"]
-VALID_WEATHERS = {'rain', 'sun', 'fog', 'drizzle', 'snow', 'storm'}
-MODEL_DIR = Path("models")
-os.makedirs(MODEL_DIR, exist_ok=True)
-MAX_FILE_SIZE = 1024 * 1024 * 10  # 10MB
+EXPECTED_COLUMNS = [
+    "precipitation",
+    "temp_max",
+    "temp_min",
+    "wind",
+    "lag_wind_1",
+    "lag_precipitation_1",
+    "lag_temp_max_1",
+    "lag_temp_min_1"
+]
+
+MODEL_PATH = Path("models/neural_network_model.h5").absolute()
+os.makedirs(MODEL_PATH.parent, exist_ok=True)
 trained_models_cache = {}
 
-# Pydantic Models
+class ConfusionMatrix(BaseModel):
+    true_negative: int
+    false_positive: int
+    false_negative: int
+    true_positive: int
+
+class MetricDetail(BaseModel):
+    accuracy: float
+    precision: float
+    recall: float
+    f1: float
+    confusion_matrix: ConfusionMatrix
+
 class WeatherInput(BaseModel):
     precipitation: float
     temp_max: float
     temp_min: float
     wind: float
-    date: datetime
-
-class ModelMetrics(BaseModel):
-    accuracy: float
-    precision: float
-    recall: float
-    f1_score: float
-    confusion_matrix: dict
+    lag_wind_1: float
+    lag_precipitation_1: float
+    lag_temp_max_1: float
+    lag_temp_min_1: float
 
 class RetrainResponse(BaseModel):
-    best_model_type: str
-    metrics: ModelMetrics
-    model_version: str
+    metrics: MetricDetail
+    model_id: str
+    message: str
     training_samples: int
     test_samples: int
 
-class UploadResponse(BaseModel):
+class SaveResponse(BaseModel):
+    success: bool
     message: str
-    invalid_entries: int
-    duplicates_skipped: int = 0
-    records_inserted: int
+
+class BulkUploadResponse(BaseModel):
+    success: bool
+    message: str
+    records_added: int
+    invalid_records: int
 
 # Helper Functions
-def fetch_historical_data(db: Session, days: int = 7) -> List[WeatherData]:
-    cutoff_date = datetime.now() - timedelta(days=days)
-    return db.query(WeatherData).filter(WeatherData.date >= cutoff_date).all()
-
-def validate_weather_data(df: pd.DataFrame) -> None:
-    """Validate weather data DataFrame"""
-    # Check required columns
-    missing_cols = [col for col in EXPECTED_COLUMNS if col not in df.columns]
-    if missing_cols:
-        raise ValueError(f"Missing columns: {missing_cols}")
-
-    # Validate numeric columns
-    numeric_cols = ["precipitation", "temp_max", "temp_min", "wind"]
-    for col in numeric_cols:
-        if not pd.api.types.is_numeric_dtype(df[col]):
-            raise ValueError(f"Column {col} contains non-numeric values")
-        if df[col].isnull().any():
-            raise ValueError(f"Column {col} contains missing values")
-
-    # Validate date format
-    df['date'] = pd.to_datetime(df['date'], errors='coerce')
-    if df['date'].isnull().any():
-        invalid_dates = df[df['date'].isnull()]['date'].tolist()
-        raise ValueError(f"Invalid date values detected: {invalid_dates[:5]}")
-
-    # Validate weather categories
-    invalid_entries = df[~df['weather'].isin(VALID_WEATHERS)]
-    if not invalid_entries.empty:
-        invalid_values = invalid_entries['weather'].unique().tolist()
-        raise ValueError(f"Invalid weather values: {invalid_values}")
+def cleanup_expired_models():
+    try:
+        now = datetime.now()
+        expired_ids = [
+            model_id for model_id, data in trained_models_cache.items()
+            if data['expires'] < now
+        ]
+        for model_id in expired_ids:
+            del trained_models_cache[model_id]
+            logger.info(f"Cleaned up expired model: {model_id}")
+    except Exception as e:
+        logger.error(f"Error cleaning up expired models: {str(e)}", exc_info=True)
 
 # API Endpoints
-@app.post("/upload-weather-data/", response_model=UploadResponse)
-async def upload_weather_data(
+@app.post("/upload-training-data/", response_model=BulkUploadResponse)
+async def upload_training_data(
     file: UploadFile = File(...),
     db: Session = Depends(get_db)
 ):
-    """Upload weather data to database"""
+    """Upload training data to database"""
+    logger.info("Starting training data upload")
     try:
-        # Validate file
-        if not file.filename.lower().endswith('.csv'):
-            raise HTTPException(400, "Only CSV files are supported")
+        # Read file
+        file_content = await file.read()
+        if file.filename.endswith('.csv'):
+            df = pd.read_csv(io.BytesIO(file_content))
+            logger.debug("Successfully read CSV file")
+        elif file.filename.endswith(('.xls', '.xlsx')):
+            df = pd.read_excel(io.BytesIO(file_content))
+            logger.debug("Successfully read Excel file")
+        else:
+            logger.error(f"Unsupported file format: {file.filename}")
+            raise HTTPException(400, "Unsupported file format")
 
-        # Read and parse file
-        try:
-            contents = await file.read()
-            if len(contents) == 0:
-                raise HTTPException(400, "Empty file uploaded")
-                
-            df = pd.read_csv(io.BytesIO(contents))
-        except Exception as e:
-            raise HTTPException(400, f"Failed to parse CSV: {str(e)}")
+        # Validate required columns
+        required_columns = ['precipitation', 'temp_max', 'temp_min', 'wind', 'weather']
+        missing_cols = [col for col in required_columns if col not in df.columns]
+        if missing_cols:
+            logger.error(f"Missing required columns: {missing_cols}")
+            raise HTTPException(400, f"Missing required columns: {missing_cols}")
 
-        # Validate data
-        try:
-            validate_weather_data(df)
-        except ValueError as e:
-            raise HTTPException(400, str(e))
-
-        # Process records
-        inserted_count = 0
-        duplicate_count = 0
-        invalid_count = 0
+        # Insert records
+        records_added = 0
+        invalid_records = 0
         
-        for record in df.to_dict('records'):
+        for _, row in df.iterrows():
             try:
-                # Prepare record
-                if isinstance(record['date'], str):
-                    try:
-                        record['date'] = pd.to_datetime(record['date']).to_pydatetime()
-                    except ValueError:
-                        invalid_count += 1
-                        continue
+                # Handle date if it exists in the data
+                date_value = pd.to_datetime(row['date']).date() if 'date' in df.columns else None
                 
-                # Insert record
-                try:
-                    weather_data = WeatherData(**record)
-                    db.add(weather_data)
-                    db.commit()
-                    inserted_count += 1
-                except IntegrityError:
-                    db.rollback()
-                    duplicate_count += 1
-                except (DataError, ValueError) as e:
-                    db.rollback()
-                    invalid_count += 1
-                    logger.warning(f"Invalid record: {record} - Error: {str(e)}")
+                record = WeatherData(
+                    date=date_value,
+                    precipitation=float(row['precipitation']),
+                    temp_max=float(row['temp_max']),
+                    temp_min=float(row['temp_min']),
+                    wind=float(row['wind']),
+                    weather=str(row['weather'])
+                )
+                db.add(record)
+                records_added += 1
+            except (ValueError, TypeError) as e:
+                invalid_records += 1
+                logger.warning(f"Invalid record: {e}")
+                continue
             except Exception as e:
-                db.rollback()
-                logger.error(f"Unexpected error processing record: {str(e)}")
-                invalid_count += 1
+                invalid_records += 1
+                logger.error(f"Unexpected error processing record: {e}", exc_info=True)
+                continue
 
-        if inserted_count == 0 and invalid_count == 0 and duplicate_count == 0:
-            raise HTTPException(400, "No valid records found in file")
-
-        return UploadResponse(
-            message=f"Processed {len(df)} records",
-            records_inserted=inserted_count,
-            invalid_entries=invalid_count,
-            duplicates_skipped=duplicate_count
+        db.commit()
+        logger.info(f"Successfully added {records_added} records, {invalid_records} invalid records")
+        return BulkUploadResponse(
+            success=True,
+            message=f"Added {records_added} records",
+            records_added=records_added,
+            invalid_records=invalid_records
         )
 
-    except HTTPException:
+    except HTTPException as he:
+        logger.error(f"HTTP Exception during upload: {he.detail}")
         raise
     except Exception as e:
-        logger.error(f"Upload failed: {str(e)}", exc_info=True)
-        raise HTTPException(500, f"Processing failed: {str(e)}")
+        db.rollback()
+        logger.error(f"Database operation failed: {str(e)}", exc_info=True)
+        raise HTTPException(500, f"Database operation failed: {str(e)}")
 
-@app.post("/predict-weather/")
-async def predict_weather_endpoint(input_data: WeatherInput):
+@app.post("/predict-single/")
+async def predict_single(input_data: WeatherInput):
+    logger.info("Starting single prediction")
     try:
-        # Load necessary artifacts
-        model, scaler, encoder = load_latest_model()
+        input_df = pd.DataFrame([input_data.dict()], columns=EXPECTED_COLUMNS)
+        model = load_keras_model(MODEL_PATH)
+        results = predict(input_df, model)
         
-        # Create DataFrame with historical context
-        input_df = pd.DataFrame([input_data.dict()])
-        input_df = generate_lag_features(input_df)
-        
-        # Preprocess and predict
-        processed_input = preprocess_data(input_df, scaler=scaler)
-        prediction = predict_weather(processed_input, model, encoder)
-        
+        logger.info("Successfully completed single prediction")
         return {
-            "prediction": prediction,
-            "model_version": model.metadata['version'],
-            "timestamp": datetime.now()
+            "prediction": int(results['predictions'][0]),
+            "probability": float(results['probabilities'][0])
         }
     except Exception as e:
-        logger.error(f"Prediction failed: {str(e)}", exc_info=True)
-        raise HTTPException(
-            status_code=500,
-            detail="Failed to generate weather prediction"
-        )
+        logger.error(f"Error during single prediction: {str(e)}", exc_info=True)
+        raise HTTPException(status_code=500, detail=str(e))
 
-@app.post("/retrain-model/", response_model=RetrainResponse)
-async def retrain_model(db: Session = Depends(get_db)):
-    """Retrain weather classification models"""
+@app.post("/predict-bulk/")
+async def predict_bulk(file: UploadFile = File(...)):
+    logger.info("Starting bulk prediction")
     try:
-        # Fetch and prepare data
-        records = fetch_historical_data(db)
-        if len(records) < 100:
+        df = load_prediction_data(file)
+        model = load_keras_model(MODEL_PATH)
+        results = predict(df, model)
+        
+        combined_results = [
+            {"prediction": int(pred), "probability": float(prob)}
+            for pred, prob in zip(results['predictions'], results['probabilities'])
+        ]
+        
+        logger.info(f"Successfully completed bulk prediction for {len(combined_results)} records")
+        return {
+            "results": combined_results,
+            "count": len(combined_results)
+        }
+    except Exception as e:
+        logger.error(f"Error during bulk prediction: {str(e)}", exc_info=True)
+        raise HTTPException(status_code=400, detail=str(e))
+
+@app.post("/retrain/", response_model=RetrainResponse)
+async def retrain_model(db: Session = Depends(get_db)):
+    """
+    Endpoint to retrain the model with fresh data from the database.
+    Steps:
+    1. Fetch data from database
+    2. Preprocess the data
+    3. Validate data types and ranges
+    4. Train a new neural network model
+    5. Evaluate the model
+    6. Save the new model
+    7. Return training metrics
+    """
+    logger.info("Starting model retraining process")
+    
+    try:
+        # 1. Fetch data from database
+        logger.info("Fetching training data from database")
+        df = fetch_training_data(db)
+        
+        if len(df) < 100:
+            logger.error(f"Insufficient data for retraining. Only {len(df)} records available.")
             raise HTTPException(
                 status_code=400,
-                detail="Minimum 100 records required for retraining"
+                detail=f"At least 100 records required for retraining. Only {len(df)} available."
+            )
+        
+        logger.info(f"Successfully fetched {len(df)} records from database")
+
+        # 2. Preprocess the data
+        logger.info("Preprocessing data")
+        try:
+            X_train, X_test, y_train, y_test = preprocess_data(df)
+            logger.info(f"Data preprocessed. Shapes - X_train: {X_train.shape}, X_test: {X_test.shape}")
+        except Exception as e:
+            logger.error(f"Data preprocessing failed: {str(e)}", exc_info=True)
+            raise HTTPException(
+                status_code=400,
+                detail=f"Data preprocessing failed: {str(e)}"
             )
 
-        df = pd.DataFrame([{
-            "date": r.date,
-            "precipitation": r.precipitation,
-            "temp_max": r.temp_max,
-            "temp_min": r.temp_min,
-            "wind": r.wind,
-            "weather": r.weather
-        } for r in records])
+        # 3. Validate data types and ranges
+        logger.info("Validating data types and ranges")
+        try:
+            # Ensure proper data types
+            X_train = X_train.astype(np.float32)
+            X_test = X_test.astype(np.float32)
+            y_train = y_train.astype(np.int32)
+            y_test = y_test.astype(np.int32)
 
-        # Preprocess data
-        processed_df = preprocess_data(df)
-        processed_df = generate_lag_features(processed_df)
+            # Check for extreme values in features
+            if (np.abs(X_train) > 1e6).any():
+                logger.error("Extreme feature values detected in training data")
+                raise ValueError("Feature values too large - check preprocessing")
+
+            # Check label values
+            unique_labels = np.unique(y_train)
+            if len(unique_labels) > 100:  # Assuming reasonable number of classes
+                logger.error(f"Too many unique labels detected: {len(unique_labels)}")
+                raise ValueError("Too many unique labels - check label encoding")
+
+            if y_train.max() > len(unique_labels) - 1:
+                logger.error(f"Label values out of range. Max: {y_train.max()}, Expected max: {len(unique_labels)-1}")
+                raise ValueError("Label values out of expected range")
+                
+        except Exception as e:
+            logger.error(f"Data validation failed: {str(e)}", exc_info=True)
+            raise HTTPException(
+                status_code=400,
+                detail=f"Data validation failed: {str(e)}"
+            )
+
+        # 4. Train new model
+        logger.info("Initializing new neural network model")
+        try:
+            num_classes = len(np.unique(y_train))
+            logger.info(f"Number of classes detected: {num_classes}")
+
+            model = Sequential([
+                Dense(256, activation='relu', input_shape=(X_train.shape[1],)),
+                BatchNormalization(),
+                Dropout(0.5),
+                Dense(128, activation='relu'),
+                BatchNormalization(),
+                Dropout(0.3),
+                Dense(num_classes, activation='softmax')
+            ])
+
+            model.compile(
+                optimizer=Adam(learning_rate=0.001),
+                loss='sparse_categorical_crossentropy',
+                metrics=['accuracy']
+            )
+
+            logger.info("Starting model training")
+            history = model.fit(
+                X_train, y_train,
+                validation_data=(X_test, y_test),
+                epochs=50,
+                batch_size=32,
+                verbose=1
+            )
+            logger.info("Model training completed successfully")
+        except Exception as e:
+            logger.error(f"Model training failed: {str(e)}", exc_info=True)
+            raise HTTPException(
+                status_code=500,
+                detail=f"Model training failed: {str(e)}"
+            )
+
+        # 5. Evaluate model
+        logger.info("Evaluating model performance")
+        try:
+            metrics = evaluate_model(model, X_test, y_test)
+            logger.info(f"Model evaluation completed. Accuracy: {metrics['accuracy']}")
+        except Exception as e:
+            logger.error(f"Model evaluation failed: {str(e)}", exc_info=True)
+            raise HTTPException(
+                status_code=500,
+                detail=f"Model evaluation failed: {str(e)}"
+            )
+
+        # 6. Save the new model
+        logger.info("Saving retrained model")
+        try:
+            model.save(MODEL_PATH)
+            logger.info(f"Model saved successfully to {MODEL_PATH}")
+        except Exception as e:
+            logger.error(f"Model save failed: {str(e)}", exc_info=True)
+            raise HTTPException(
+                status_code=500,
+                detail=f"Model save failed: {str(e)}"
+            )
+
+        # 7. Prepare response
+        response = RetrainResponse(
+            metrics=MetricDetail(**metrics),
+            model_id=str(uuid.uuid4()),
+            message="Model retrained successfully",
+            training_samples=len(X_train),
+            test_samples=len(X_test)
+        )
         
-        # Split data
-        train_df, test_df = train_test_split(
-            processed_df,
-            test_size=0.2,
-            stratify=processed_df['weather_encoded'],
-            random_state=42
-        )
-
-        # Train models
-        logreg_model, logreg_metrics = train_logistic_regression(train_df, test_df)
-        rf_model, rf_metrics = train_random_forest(train_df, test_df)
-        nn_model, nn_metrics = train_neural_network(train_df, test_df)
-
-        # Select best model
-        models = {
-            "logistic_regression": (logreg_model, logreg_metrics),
-            "random_forest": (rf_model, rf_metrics),
-            "neural_network": (nn_model, nn_metrics)
-        }
-        best_model_type = max(models, key=lambda k: models[k][1]['accuracy'])
-        best_model, best_metrics = models[best_model_type]
-
-        # Version and save model
-        model_version = f"{best_model_type}_{datetime.now().strftime('%Y%m%d%H%M')}"
-        best_model.metadata = {
-            "version": model_version,
-            "training_date": datetime.now(),
-            "metrics": best_metrics,
-            "model_type": best_model_type
-        }
-        joblib.dump(best_model, MODEL_DIR / f"{model_version}.pkl")
-
-        return RetrainResponse(
-            best_model_type=best_model_type,
-            metrics=ModelMetrics(**best_metrics),
-            model_version=model_version,
-            training_samples=len(train_df),
-            test_samples=len(test_df)
-        )
+        logger.info("Retraining process completed successfully")
+        return response
 
     except HTTPException:
-        raise
+        raise  # Re-raise HTTPExceptions we created
     except Exception as e:
-        logger.error(f"Retraining failed: {str(e)}", exc_info=True)
+        logger.error(f"Unexpected error during retraining: {str(e)}", exc_info=True)
         raise HTTPException(
             status_code=500,
-            detail="Model retraining failed"
+            detail=f"Unexpected error during retraining: {str(e)}"
         )
 
-@app.get("/model-performance/")
-async def get_model_performance():
-    """Get performance metrics for all trained models"""
+@app.post("/save-model/", response_model=SaveResponse)
+async def save_model_endpoint(
+    model_data: dict,
+    db: Session = Depends(get_db)
+):
+    """Save a trained model from cache to persistent storage"""
+    logger.info("Starting model save operation")
     try:
-        models = []
-        for model_file in MODEL_DIR.glob("*.pkl"):
-            try:
-                model = joblib.load(model_file)
-                if hasattr(model, 'metadata'):
-                    models.append({
-                        "version": model.metadata.get('version'),
-                        "type": model.metadata.get('model_type'),
-                        "accuracy": model.metadata.get('metrics', {}).get('accuracy'),
-                        "training_date": model.metadata.get('training_date')
-                    })
-            except Exception as e:
-                logger.warning(f"Failed to load model {model_file}: {str(e)}")
-                continue
-                
-        return {"models": sorted(models, key=lambda x: x['training_date'], reverse=True)}
-    except Exception as e:
-        logger.error(f"Failed to get model performance: {str(e)}", exc_info=True)
-        raise HTTPException(
-            status_code=500,
-            detail="Failed to retrieve model performance data"
+        model_id = model_data.get('model_id')
+        if not model_id:
+            logger.error("Missing model_id in save request")
+            raise HTTPException(400, "Missing model_id")
+        
+        model_data = trained_models_cache.get(model_id)
+        if not model_data:
+            logger.error(f"Model not found in cache: {model_id}")
+            raise HTTPException(404, "Model not found or expired")
+        
+        model_data['model'].save(MODEL_PATH)
+        logger.info(f"Successfully saved model to {MODEL_PATH}")
+        
+        del trained_models_cache[model_id]
+        logger.info(f"Removed model {model_id} from cache")
+        
+        return SaveResponse(
+            success=True,
+            message="Model saved successfully"
         )
+        
+    except HTTPException as he:
+        logger.error(f"HTTP Exception during model save: {he.detail}")
+        raise
+    except Exception as e:
+        logger.error(f"Error saving model: {str(e)}", exc_info=True)
+        raise HTTPException(500, str(e))
 
 @app.get("/")
 async def root():
-    return {"message": "Weather Classification API", "version": "1.0.0"}
+    logger.info("Root endpoint accessed")
+    return {"message": "Welcome to the WeatherWise Prediction API!"}
 
 if __name__ == "__main__":
-    uvicorn.run(app, host="0.0.0.0", port=8000)
+    logger.info("Starting FastAPI application")
+    uvicorn.run("src.app.main:app", host="0.0.0.0", port=8000, reload=True)

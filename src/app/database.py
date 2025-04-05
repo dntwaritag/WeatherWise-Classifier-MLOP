@@ -1,53 +1,50 @@
-# database.py
 from sqlalchemy import create_engine
-from sqlalchemy.orm import sessionmaker, Session, declarative_base
-from urllib.parse import quote_plus
-from contextlib import contextmanager
-from typing import Generator
-import time
+from sqlalchemy.orm import sessionmaker
+from .models import Base
+import os
+from dotenv import load_dotenv
+import urllib.parse
 
-DB_USER = "seattle_weather_user"
-DB_PASSWORD = "hS1yirAgqJqyY6Kd6KMgwuKkTEhZInQn"
-DB_HOST = "dpg-cvmr6sp5pdvs73flesc0-a.oregon-postgres.render.com"
-DB_NAME = "seattle_weather"
+# Load environment variables
+load_dotenv()
 
-encoded_password = quote_plus(DB_PASSWORD)
-DATABASE_URL = f"postgresql://{DB_USER}:{encoded_password}@{DB_HOST}/{DB_NAME}?sslmode=require"
+def get_database_url():
+    # Get credentials from environment
+    db_user = os.getenv("DB_USER", "weatherwise_user")
+    db_password = urllib.parse.quote_plus(os.getenv("DB_PASSWORD", ""))
+    db_host = os.getenv("DB_HOST", "dpg-cvm3v5re5dus73aevum0-a.oregon-postgres.render.com")
+    db_name = os.getenv("DB_NAME", "weatherwise")
+    
+    return f"postgresql://{db_user}:{db_password}@{db_host}/{db_name}?sslmode=require"
+
+DATABASE_URL = get_database_url()
 
 engine = create_engine(
     DATABASE_URL,
     pool_size=5,
     max_overflow=10,
     pool_pre_ping=True,
-    pool_recycle=3600,
     connect_args={
         "connect_timeout": 10,
         "keepalives": 1,
-        "keepalives_idle": 30,
-        "keepalives_interval": 10,
-        "keepalives_count": 5
+        "keepalives_idle": 30
     }
 )
 
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 
-Base = declarative_base()
-
-def get_db() -> Generator[Session, None, None]:
+def get_db():
     db = SessionLocal()
     try:
-        # Test the connection first
-        db.execute("SELECT 1")
         yield db
-    except Exception as e:
-        db.close()
-        raise HTTPException(
-            status_code=500,
-            detail=f"Database connection failed: {str(e)}"
-        )
     finally:
         db.close()
 
-def initialize_database():
-    """Initialize database tables"""
-    Base.metadata.create_all(bind=engine)
+def init_db():
+    try:
+        Base.metadata.create_all(bind=engine)
+        print("Database tables initialized")
+    except Exception as e:
+        print(f"Warning: Could not create tables on startup: {e}")
+
+init_db()
