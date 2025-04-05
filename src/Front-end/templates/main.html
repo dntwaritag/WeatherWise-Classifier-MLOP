@@ -3,71 +3,55 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>WeatherWise Classifier</title>
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-    <link rel="stylesheet" href="../css/main.css">
+    <title>WeatherWise - Weather Classification</title>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/css/main.css">
 </head>
 <body>
     <nav>
         <h2>WeatherWise</h2>
         <ul>
-            <li class="active"><a href="main.html"><i class="fas fa-home"></i> Home</a></li>
-            <li><a href="predict.html"><i class="fas fa-cloud-sun-rain"></i> Prediction</a></li>
-            <li><a href="retrain.html"><i class="fas fa-cogs"></i> Retrain Model</a></li>
-            <li><a href="visuals.html"><i class="fas fa-chart-bar"></i> Visualizations</a></li>
+            <li><a href="main.html">Home</a></li>
+            <li><a href="predict.html">Prediction</a></li>
+            <li><a href="retrain.html">Retrain Model</a></li>
+            <li><a href="visuals.html">Data Visualizations</a></li>
         </ul>
     </nav>
     
     <div class="content">
-        <section class="hero">
-            <h1>Accurate Weather Classification with AI</h1>
-            <p>WeatherWise uses advanced machine learning to predict weather conditions based on historical patterns and current atmospheric data, helping you plan better for any weather scenario.</p>
-            <a href="predict.html" class="cta-button">Try Prediction Now</a>
-        </section>
-        
-        <div class="features-container">
-            <div class="feature-card">
-                <i class="fas fa-bolt"></i>
-                <h3>Real-time Predictions</h3>
-                <p>Get instant weather condition classifications based on the latest atmospheric data with our advanced machine learning models.</p>
-            </div>
-            
-            <div class="feature-card">
-                <i class="fas fa-cloud"></i>
-                <h3>Multiple Weather Types</h3>
-                <p>Our system accurately classifies between rain, sun, snow, fog, and drizzle with high confidence levels.</p>
-            </div>
-            
-            <div class="feature-card">
-                <i class="fas fa-chart-line"></i>
-                <h3>Data Insights</h3>
-                <p>Explore comprehensive visualizations of weather patterns and model performance metrics.</p>
-            </div>
-            
-            <div class="feature-card">
-                <i class="fas fa-cogs"></i>
-                <h3>Model Management</h3>
-                <p>Easily retrain and update your models with new data to maintain prediction accuracy over time.</p>
-            </div>
-        </div>
-        
-        <div class="image-gallery">
-            <div class="gallery-item">
-                <img src="../images/1.png" alt="Weather Dashboard">
-            </div>
-            <div class="gallery-item">
-                <img src="../images/2.png" alt="Prediction Interface">
-            </div>
-            <div class="gallery-item">
-                <img src="../images/3.png" alt="Model Training">
-            </div>
-            <div class="gallery-item">
-                <img src="../images/4.png" alt="Data Visualization">
-            </div>
+        <div class="text-content">
+            <section id="home">
+                <h1>Welcome to WeatherWise</h1>
+                <p>
+                    WeatherWise is an AI-powered weather classification system designed to predict weather conditions 
+                    based on historical meteorological data from Seattle.
+                </p>
+                <p>
+                    Our model analyzes key weather indicators to provide accurate weather predictions, 
+                    enabling better planning and decision-making.
+                </p>
+            </section>
+    
+            <section id="image-section">
+                <div class="image-box">
+                    <img src="/images/weather_distribution.png" alt="Weather Distribution" class="weather-image">
+                </div>
+                <div class="image-box">
+                    <img src="/images/correlation_heatmap.png" alt="Feature Correlation" class="weather-image">
+                </div>
+            </section>
+    
+            <section id="features">
+                <h2>Key Features</h2>
+                <ul>
+                    <li><i><b>Real-Time Predictions</b></i>: Instantly analyze weather data and get AI-powered results.</li>
+                    <li><i><b>Data Insights & Visualizations</b></i>: Gain insights from key weather features.</li>
+                    <li><i><b>Bulk Data Upload</b></i>: Easily upload multiple files for batch predictions.</li>
+                    <li><i><b>On-Demand Model Retraining</b></i>: Improve model accuracy with new data.</li>
+                    <li><i><b>Performance Metrics</b></i>: Track model accuracy, precision, recall, and F1-score.</li>
+                </ul>
+            </section>
         </div>
     </div>
-
-    <script src="../js/main.js"></script>
 </body>
 </html>

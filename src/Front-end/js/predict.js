@@ -1,285 +1,256 @@
-document.addEventListener('DOMContentLoaded', function() {
-    // DOM Elements
-    const singlePredictionForm = document.getElementById('singlePredictionForm');
-    const bulkPredictionForm = document.getElementById('bulkPredictionForm');
-    const fileInput = document.getElementById('dataset');
-    const fileLabel = document.querySelector('.file-label');
-    const fileNameDisplay = document.querySelector('.file-name');
-    const resultContainer = document.getElementById('singlePredictionResult');
-    const bulkResultContainer = document.getElementById('bulkPredictionResult');
-    const spinner = document.getElementById('spinner');
-    const bulkSpinner = document.getElementById('bulkPredictionSpinner');
-    const API_BASE_URL = 'https://your-api-url.com/api';
+const API_BASE_URL = 'https://weatherwise-api.onrender.com';
+const EXPECTED_FIELDS = [
+    "precipitation", 
+    "temp_max", 
+    "temp_min",
+    "wind",
+    "lag_wind_1",
+    "lag_precipitation_1",
+    "lag_temp_max_1",
+    "lag_temp_min_1"
+];
 
-    // Weather feature fields
-    const weatherFields = [
-        'precipitation',
-        'temp_max',
-        'temp_min',
-        'wind',
-        'lag_wind_1',
-        'lag_precipitation_1',
-        'lag_temp_max_1',
-        'lag_temp_min_1'
-    ];
+// Storage keys
+const SINGLE_PREDICTION_KEY = 'singlePredictionData';
+const BULK_PREDICTION_KEY = 'bulkPredictionData';
 
-    // Initialize form fields
-    function initFormFields() {
-        const formGrid = document.getElementById('formGridContainer');
-        formGrid.innerHTML = '';
-
-        weatherFields.forEach(field => {
-            const div = document.createElement('div');
-            div.className = 'form-item';
-
-            const label = document.createElement('label');
-            label.htmlFor = field;
-            label.textContent = field.replace(/_/g, ' ') + ':';
-
-            const input = document.createElement('input');
-            input.type = 'number';
-            input.step = '0.01';
-            input.id = field;
-            input.name = field;
-            input.required = true;
-
-            div.appendChild(label);
-            div.appendChild(input);
-            formGrid.appendChild(div);
-        });
-    }
-
-    // Toggle spinner
-    function toggleSpinner(element, show) {
-        element.style.display = show ? 'block' : 'none';
-    }
-
-    // Format weather type
-    function formatWeatherType(type) {
-        const types = {
-            'rain': 'Rainy',
-            'sun': 'Sunny',
-            'fog': 'Foggy',
-            'drizzle': 'Drizzly',
-            'snow': 'Snowy'
-        };
-        return types[type.toLowerCase()] || type;
-    }
-
-    // Show prediction result
-    function showPredictionResult(prediction) {
-        const weatherType = formatWeatherType(prediction.weather);
-        const confidencePercent = Math.round(prediction.confidence * 100);
+function initializeFormFields() {
+    const formGrid = document.getElementById("formGridContainer");
+    formGrid.innerHTML = '';
+    
+    EXPECTED_FIELDS.forEach(field => {
+        const div = document.createElement("div");
+        div.className = "form-item";
         
-        // Set weather icon
-        const weatherIcon = document.getElementById('weather-icon');
-        weatherIcon.className = 'weather-icon';
+        const label = document.createElement("label");
+        label.htmlFor = field;
+        label.textContent = field.replace(/_/g, " ") + ":";
         
-        if (weatherType.toLowerCase().includes('rain')) {
-            weatherIcon.classList.add('weather-rainy');
-            weatherIcon.innerHTML = '<i class="fas fa-cloud-rain"></i>';
-        } else if (weatherType.toLowerCase().includes('sun')) {
-            weatherIcon.classList.add('weather-sunny');
-            weatherIcon.innerHTML = '<i class="fas fa-sun"></i>';
-        } else if (weatherType.toLowerCase().includes('fog')) {
-            weatherIcon.classList.add('weather-foggy');
-            weatherIcon.innerHTML = '<i class="fas fa-smog"></i>';
-        } else if (weatherType.toLowerCase().includes('snow')) {
-            weatherIcon.classList.add('weather-snowy');
-            weatherIcon.innerHTML = '<i class="fas fa-snowflake"></i>';
-        } else {
-            weatherIcon.classList.add('weather-cloudy');
-            weatherIcon.innerHTML = '<i class="fas fa-cloud"></i>';
-        }
+        const input = document.createElement("input");
+        input.type = "number";
+        input.step = "0.0001";
+        input.id = field;
+        input.name = field;
+        input.required = true;
         
-        // Update confidence meter
-        const confidenceBar = document.getElementById('confidenceBar');
-        confidenceBar.style.width = `${confidencePercent}%`;
-        
-        // Update text
-        document.getElementById('weather-type').textContent = weatherType;
-        document.getElementById('confidence-percent').textContent = `${confidencePercent}%`;
-        document.getElementById('model-version').textContent = prediction.model_version;
-        
-        // Show probabilities
-        const probabilitiesList = document.getElementById('probabilities-list');
-        probabilitiesList.innerHTML = '';
-        
-        prediction.probabilities.forEach(prob => {
-            const li = document.createElement('li');
-            li.innerHTML = `
-                <span>${formatWeatherType(prob.weather)}:</span>
-                <span>${Math.round(prob.probability * 100)}%</span>
-            `;
-            probabilitiesList.appendChild(li);
-        });
-        
-        // Show result
+        div.appendChild(label);
+        div.appendChild(input);
+        formGrid.appendChild(div);
+    });
+}
+
+function toggleSpinner(spinnerId, show) {
+    document.getElementById(spinnerId).style.display = show ? 'block' : 'none';
+}
+
+function saveSinglePredictionToSession(prediction, probability) {
+    sessionStorage.setItem(SINGLE_PREDICTION_KEY, JSON.stringify({
+        prediction,
+        probability,
+        timestamp: new Date().getTime()
+    }));
+}
+
+function saveBulkPredictionToSession(results) {
+    sessionStorage.setItem(BULK_PREDICTION_KEY, JSON.stringify({
+        results,
+        timestamp: new Date().getTime()
+    }));
+}
+
+function loadSinglePredictionFromSession() {
+    const data = sessionStorage.getItem(SINGLE_PREDICTION_KEY);
+    return data ? JSON.parse(data) : null;
+}
+
+function loadBulkPredictionFromSession() {
+    const data = sessionStorage.getItem(BULK_PREDICTION_KEY);
+    return data ? JSON.parse(data) : null;
+}
+
+function showPredictionResult(prediction, probability) {
+    const isRain = prediction === 1;
+    const resultContainer = document.getElementById("singlePredictionResult");
+    const confidenceBar = document.getElementById("confidenceBar");
+    const weatherPercentage = document.getElementById("weatherPercentage");
+    const weatherExplanation = document.getElementById("weatherExplanation");
+    
+    // Set styling
+    resultContainer.className = `result-container ${isRain ? 'weather-rain' : 'weather-sun'}`;
+    
+    // Update confidence meter
+    const confidencePercent = Math.round(probability * 100);
+    confidenceBar.style.width = `${confidencePercent}%`;
+    confidenceBar.style.backgroundColor = isRain ? '#3498db' : '#f1c40f';
+    
+    // Set text content
+    weatherPercentage.textContent = isRain
+        ? `RAIN LIKELY (${confidencePercent}% chance)`
+        : `SUNNY (${confidencePercent}% chance)`;
+    
+    weatherExplanation.textContent = isRain
+        ? "High probability of precipitation"
+        : "Clear skies expected";
+    
+    resultContainer.style.display = 'block';
+}
+
+function showBulkPredictionResults(results) {
+    const resultContainer = document.getElementById('bulkPredictionResult');
+    resultContainer.style.display = 'none';
+    resultContainer.innerHTML = '';
+
+    if (!results || !Array.isArray(results)) {
+        resultContainer.innerHTML = `
+            <div class="weather-rain" style="padding: 15px; text-align: left;">
+                <strong>Error:</strong> Invalid results data
+            </div>
+        `;
         resultContainer.style.display = 'block';
+        return;
+    }
+    
+    const rainCount = results.filter(p => p.prediction === 1).length;
+    const total = results.length;
+    const rainPercent = total > 0 ? Math.round(rainCount/total*100) : 0;
+    
+    const summaryHTML = `
+        <div class="summary-card">
+            <strong>Batch Summary:</strong> Processed ${total} records with 
+            <span class="weather-badge ${rainCount ? 'badge-rain' : 'badge-sun'}">
+                ${rainCount} rainy days (${rainPercent}%)
+            </span>
+        </div>
+    `;
+    
+    let tableHTML = `
+        <table class="result-table">
+            <thead>
+                <tr>
+                    <th>Record #</th>
+                    <th>Weather</th>
+                    <th>Probability</th>
+                </tr>
+            </thead>
+            <tbody>
+    `;
+    
+    results.forEach((pred, index) => {
+        const isRain = pred.prediction === 1;
+        const confidencePercent = pred.probability !== undefined && pred.probability !== null 
+            ? Math.round(pred.probability * 100) 
+            : 'N/A';
+        
+        tableHTML += `
+            <tr>
+                <td>${index + 1}</td>
+                <td><span class="weather-badge ${isRain ? 'badge-rain' : 'badge-sun'}">
+                    ${isRain ? 'RAIN' : 'SUN'}
+                </span></td>
+                <td>${confidencePercent}%</td>
+            </tr>
+        `;
+    });
+    
+    tableHTML += `</tbody></table>`;
+    
+    resultContainer.innerHTML = summaryHTML + tableHTML;
+    resultContainer.style.display = 'block';
+}
+
+async function handleBulkPrediction(e) {
+    e.preventDefault();
+    const fileInput = document.getElementById("dataset");
+    
+    if (!fileInput.files.length) {
+        alert("Please select a file first");
+        return;
     }
 
-    // Handle single prediction form submission
-    singlePredictionForm.addEventListener('submit', async function(e) {
-        e.preventDefault();
-        toggleSpinner(spinner, true);
-        resultContainer.style.display = 'none';
-        
-        try {
-            // Collect form data
-            const formData = {};
-            weatherFields.forEach(field => {
-                formData[field] = parseFloat(document.getElementById(field).value);
-            });
-            
-            // Send prediction request
-            const response = await fetch(`${API_BASE_URL}/predict`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify(formData)
-            });
-            
-            if (!response.ok) {
-                throw new Error(`Server error: ${response.status}`);
-            }
-            
-            const result = await response.json();
-            showPredictionResult(result);
-        } catch (error) {
-            console.error('Prediction error:', error);
-            alert(`Prediction failed: ${error.message}`);
-        } finally {
-            toggleSpinner(spinner, false);
+    toggleSpinner('bulkPredictionSpinner', true);
+    
+    try {
+        const formData = new FormData();
+        formData.append("file", fileInput.files[0]);
+
+        const response = await fetch(`${API_BASE_URL}/predict-bulk/`, {
+            method: "POST",
+            body: formData
+        });
+
+        if (!response.ok) {
+            const errorData = await response.json();
+            throw new Error(errorData.detail || `Server error: ${response.status}`);
         }
+        
+        const result = await response.json();
+        
+        if (!result.results || !Array.isArray(result.results)) {
+            throw new Error("Invalid response format from server");
+        }
+        
+        saveBulkPredictionToSession(result.results);
+        showBulkPredictionResults(result.results);
+        
+    } catch (error) {
+        console.error("Bulk prediction error:", error);
+        document.getElementById('bulkPredictionResult').innerHTML = `
+            <div class="weather-rain" style="padding: 15px; text-align: left;">
+                <strong>Error:</strong> ${error.message}
+            </div>
+        `;
+        document.getElementById('bulkPredictionResult').style.display = 'block';
+    } finally {
+        toggleSpinner('bulkPredictionSpinner', false);
+    }
+}
+
+async function handleSinglePrediction(e) {
+    e.preventDefault();
+    
+    toggleSpinner('singlePredictionSpinner', true);
+    
+    const formData = {};
+    EXPECTED_FIELDS.forEach(field => {
+        formData[field] = parseFloat(document.getElementById(field).value);
     });
 
-    // Handle file selection
-    fileInput.addEventListener('change', function() {
-        if (this.files.length > 0) {
-            fileNameDisplay.textContent = this.files[0].name;
-        } else {
-            fileNameDisplay.textContent = 'No file selected';
-        }
-    });
+    try {
+        const response = await fetch(`${API_BASE_URL}/predict-single/`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(formData)
+        });
 
-    // Handle bulk prediction form submission
-    bulkPredictionForm.addEventListener('submit', async function(e) {
-        e.preventDefault();
+        if (!response.ok) throw new Error(`Server error: ${response.status}`);
         
-        if (fileInput.files.length === 0) {
-            alert('Please select a file first');
-            return;
-        }
+        const result = await response.json();
+        saveSinglePredictionToSession(result.prediction, result.probability);
+        showPredictionResult(result.prediction, result.probability);
         
-        toggleSpinner(bulkSpinner, true);
-        bulkResultContainer.style.display = 'none';
-        bulkResultContainer.innerHTML = '';
-        
-        try {
-            const formData = new FormData();
-            formData.append('file', fileInput.files[0]);
-            
-            const response = await fetch(`${API_BASE_URL}/predict/bulk`, {
-                method: 'POST',
-                body: formData
-            });
-            
-            if (!response.ok) {
-                throw new Error(`Server error: ${response.status}`);
-            }
-            
-            const results = await response.json();
-            
-            // Create summary
-            const summary = document.createElement('div');
-            summary.className = 'bulk-summary';
-            
-            const totalPredictions = results.length;
-            const predictionCounts = {
-                'Rainy': 0,
-                'Sunny': 0,
-                'Foggy': 0,
-                'Drizzly': 0,
-                'Snowy': 0
-            };
-            
-            results.forEach(prediction => {
-                const weatherType = formatWeatherType(prediction.weather);
-                predictionCounts[weatherType]++;
-            });
-            
-            summary.innerHTML = `
-                <h3>Batch Prediction Summary</h3>
-                <p>Processed ${totalPredictions} records with the following distribution:</p>
-                <div class="summary-stats">
-                    ${Object.entries(predictionCounts).map(([type, count]) => `
-                        <div class="stat-card">
-                            <div class="value">${count}</div>
-                            <div class="label">${type}</div>
-                        </div>
-                    `).join('')}
-                </div>
-            `;
-            
-            bulkResultContainer.appendChild(summary);
-            
-            // Create table
-            const table = document.createElement('table');
-            table.className = 'results-table';
-            
-            // Table header
-            const thead = document.createElement('thead');
-            thead.innerHTML = `
-                <tr>
-                    <th>Record</th>
-                    <th>Weather</th>
-                    <th>Confidence</th>
-                    <th>Details</th>
-                </tr>
-            `;
-            table.appendChild(thead);
-            
-            // Table body
-            const tbody = document.createElement('tbody');
-            results.forEach((result, index) => {
-                const weatherType = formatWeatherType(result.weather);
-                const confidencePercent = Math.round(result.confidence * 100);
-                
-                const tr = document.createElement('tr');
-                tr.innerHTML = `
-                    <td>${index + 1}</td>
-                    <td>
-                        <span class="weather-badge badge-${weatherType.toLowerCase()}">
-                            ${weatherType}
-                        </span>
-                    </td>
-                    <td>${confidencePercent}%</td>
-                    <td>
-                        <button class="details-btn" data-index="${index}">
-                            <i class="fas fa-info-circle"></i> Details
-                        </button>
-                    </td>
-                `;
-                tbody.appendChild(tr);
-            });
-            table.appendChild(tbody);
-            bulkResultContainer.appendChild(table);
-            
-            bulkResultContainer.style.display = 'block';
-        } catch (error) {
-            console.error('Bulk prediction error:', error);
-            
-            const errorDiv = document.createElement('div');
-            errorDiv.className = 'error-message';
-            errorDiv.textContent = `Error: ${error.message}`;
-            bulkResultContainer.appendChild(errorDiv);
-            bulkResultContainer.style.display = 'block';
-        } finally {
-            toggleSpinner(bulkSpinner, false);
-        }
-    });
+    } catch (error) {
+        console.error("Prediction error:", error);
+        alert(`Prediction failed: ${error.message}`);
+    } finally {
+        toggleSpinner('singlePredictionSpinner', false);
+    }
+}
 
-    // Initialize the form
-    initFormFields();
+function loadPreviousResults() {
+    const singlePrediction = loadSinglePredictionFromSession();
+    if (singlePrediction) {
+        showPredictionResult(singlePrediction.prediction, singlePrediction.probability);
+    }
+    
+    const bulkPrediction = loadBulkPredictionFromSession();
+    if (bulkPrediction) {
+        showBulkPredictionResults(bulkPrediction.results);
+    }
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+    initializeFormFields();
+    document.getElementById("singlePredictionForm").addEventListener("submit", handleSinglePrediction);
+    document.getElementById("bulkPredictionForm").addEventListener("submit", handleBulkPrediction);
+    loadPreviousResults();
 });

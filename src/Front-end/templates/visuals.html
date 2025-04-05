@@ -3,127 +3,105 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Data Visualizations | WeatherWise</title>
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-    <link rel="stylesheet" href="../css/visuals.css">
+    <title>WeatherWise - Data Visualizations</title>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/css/main.css">
+    <link rel="stylesheet" href="/css/visuals.css">
 </head>
 <body>
     <nav>
         <h2>WeatherWise</h2>
         <ul>
-            <li><a href="main.html"><i class="fas fa-home"></i> Home</a></li>
-            <li><a href="predict.html"><i class="fas fa-cloud-sun-rain"></i> Prediction</a></li>
-            <li><a href="retrain.html"><i class="fas fa-cogs"></i> Retrain Model</a></li>
-            <li class="active"><a href="visuals.html"><i class="fas fa-chart-bar"></i> Visualizations</a></li>
+            <li><a href="main.html">Home</a></li>
+            <li><a href="predict.html">Prediction</a></li>
+            <li><a href="retrain.html">Retrain Model</a></li>
+            <li><a href="visuals.html">Data Visualizations</a></li>
         </ul>
     </nav>
     
     <div class="content">
-        <div class="visualizations-container">
-            <div class="page-header">
-                <h1>Weather Data Insights</h1>
-                <p>Explore comprehensive visualizations of weather patterns, model performance, and feature importance to better understand our prediction system.</p>
-            </div>
-            
-            <div class="viz-filters">
-                <button class="filter-btn active" data-filter="all">All</button>
-                <button class="filter-btn" data-filter="data">Data Distribution</button>
-                <button class="filter-btn" data-filter="model">Model Performance</button>
-                <button class="filter-btn" data-filter="feature">Feature Analysis</button>
-                <button class="filter-btn" data-filter="temporal">Temporal Patterns</button>
+        <div class="visualization-container">
+            <div class="visualization-header">
+                <h1>Weather Data Insights & Visualizations</h1>
+                <p>Explore key weather indicators and their relationships to weather patterns</p>
             </div>
             
             <div class="visualization-grid">
-                <!-- Class Distribution -->
-                <div class="visualization-card" data-category="data">
+                <!-- Weather Distribution -->
+                <div class="visualization-card">
                     <div class="card-header">
-                        <h2>Weather Class Distribution</h2>
-                        <p>Distribution of different weather conditions in our dataset</p>
-                    </div>
-                    <div class="card-body">
-                        <img src="../images/class_distribution.png" alt="Weather Class Distribution" class="visualization-image">
-                        <div class="card-description">
-                            <p>This visualization shows the balance between different weather conditions in our training dataset. A balanced dataset helps ensure our model doesn't become biased toward more common weather types.</p>
-                            <p>The distribution shows that rainy days are most common in our Seattle dataset, followed by sunny days, with fog and drizzle being relatively rare.</p>
+                        <h2>Weather Distribution</h2>
+                        <div class="tooltip info-icon">
+                            ⓘ
+                            <span class="tooltiptext">Shows distribution of different weather types</span>
                         </div>
                     </div>
-                    <div class="card-actions">
-                        <button class="download-btn" data-viz="class_distribution">
-                            <i class="fas fa-download"></i> Download
-                        </button>
+                    <div class="visualization-image-container">
+                        <img src="/images/weather_distribution.png" alt="Weather Distribution Chart" class="visualization-image">
+                    </div>
+                    <div class="card-description">
+                        <p><b>Dataset composition analysis:</b></p>
+                        <p>This visualization shows the distribution of different weather types in our dataset. Understanding this distribution helps ensure our model is trained on a representative sample of weather conditions.</p>
                     </div>
                 </div>
                 
                 <!-- Correlation Matrix -->
-                <div class="visualization-card" data-category="feature">
+                <div class="visualization-card">
                     <div class="card-header">
-                        <h2>Feature Correlation Matrix</h2>
-                        <p>Relationships between different weather features</p>
-                    </div>
-                    <div class="card-body">
-                        <img src="../images/correlation_matrix.png" alt="Feature Correlation Matrix" class="visualization-image">
-                        <div class="card-description">
-                            <p>This heatmap shows how different weather features correlate with each other. Strong positive correlations (darker blue) indicate features that vary together, while negative correlations (darker red) show inverse relationships.</p>
-                            <p>We can see that maximum and minimum temperatures are strongly correlated, while precipitation shows negative correlation with temperature features.</p>
+                        <h2>Feature Correlation</h2>
+                        <div class="tooltip info-icon">
+                            ⓘ
+                            <span class="tooltiptext">Reveals relationships between weather metrics</span>
                         </div>
                     </div>
-                    <div class="card-actions">
-                        <button class="download-btn" data-viz="correlation_matrix">
-                            <i class="fas fa-download"></i> Download
-                        </button>
+                    <div class="visualization-image-container">
+                        <img src="/images/correlation_heatmap.png" alt="Correlation Matrix" class="visualization-image">
+                    </div>
+                    <div class="card-description">
+                        <p><b>Key correlation insights:</b></p>
+                        <p>The correlation heatmap shows how different weather features relate to each other. Strong correlations help us understand which variables might be most predictive of weather conditions.</p>
                     </div>
                 </div>
                 
-                <!-- Feature Importance -->
-                <div class="visualization-card" data-category="model feature">
+                <!-- Feature Distributions -->
+                <div class="visualization-card">
                     <div class="card-header">
-                        <h2>Feature Importance</h2>
-                        <p>Which features most influence our predictions</p>
-                    </div>
-                    <div class="card-body">
-                        <img src="../images/feature_importance.png" alt="Feature Importance" class="visualization-image">
-                        <div class="card-description">
-                            <p>This chart shows which weather features contribute most to our model's predictions. Features are ranked by their Gini importance, which measures how much each feature reduces impurity in the decision trees.</p>
-                            <p>Maximum temperature and precipitation emerge as the most important predictors, while wind speed has relatively less impact on our model's decisions.</p>
+                        <h2>Feature Distributions</h2>
+                        <div class="tooltip info-icon">
+                            ⓘ
+                            <span class="tooltiptext">Distribution of weather features</span>
                         </div>
                     </div>
-                    <div class="card-actions">
-                        <button class="download-btn" data-viz="feature_importance">
-                            <i class="fas fa-download"></i> Download
-                        </button>
+                    <div class="visualization-image-container">
+                        <img src="/images/feature_distributions.png" alt="Feature Distributions" class="visualization-image">
+                    </div>
+                    <div class="card-description">
+                        <p><b>Feature distribution analysis:</b></p>
+                        <p>These histograms show how different weather features are distributed. Understanding these distributions helps with feature engineering and ensuring our model handles different value ranges appropriately.</p>
                     </div>
                 </div>
                 
-                <!-- Weather Trends -->
-                <div class="visualization-card" data-category="temporal">
+                <!-- Temperature vs Weather -->
+                <div class="visualization-card">
                     <div class="card-header">
-                        <h2>Seasonal Weather Trends</h2>
-                        <p>How weather patterns change throughout the year</p>
-                    </div>
-                    <div class="card-body">
-                        <img src="../images/weather_trends.png" alt="Seasonal Weather Trends" class="visualization-image">
-                        <div class="card-description">
-                            <p>This visualization shows how different weather conditions vary by month in our dataset. Each line represents the frequency of a particular weather type throughout the year.</p>
-                            <p>We can clearly see seasonal patterns - sunny days peak in summer months, while rainy days are most common in winter. Snow is almost exclusively a winter phenomenon in this dataset.</p>
+                        <h2>Temperature Impact</h2>
+                        <div class="tooltip info-icon">
+                            ⓘ
+                            <span class="tooltiptext">How temperature relates to weather</span>
                         </div>
                     </div>
-                    <div class="card-actions">
-                        <button class="download-btn" data-viz="weather_trends">
-                            <i class="fas fa-download"></i> Download
-                        </button>
+                    <div class="visualization-image-container">
+                        <img src="/images/lag_temp_min_1_vs_weather.png" alt="Temperature vs Weather" class="visualization-image">
+                    </div>
+                    <div class="card-description">
+                        <p><b>Temperature's role in weather:</b></p>
+                        <p>This visualization shows how minimum temperature relates to different weather conditions. Temperature is often a key predictor in weather classification models.</p>
                     </div>
                 </div>
             </div>
         </div>
     </div>
 
-    <div class="fullscreen-viz" id="fullscreen-viz">
-        <span class="close-fullscreen">&times;</span>
-        <img src="" alt="" class="fullscreen-image" id="fullscreen-image">
-        <p class="fullscreen-caption" id="fullscreen-caption"></p>
-    </div>
-
-    <script src="../js/visuals.js"></script>
+    <script src="/js/visuals.js"></script>
 </body>
 </html>
