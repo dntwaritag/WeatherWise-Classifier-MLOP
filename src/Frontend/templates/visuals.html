@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WeatherWise - Data Visualizations</title>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/css/main.css">
+    <link rel="stylesheet" href="/css/visuals.css">
+</head>
+<body>
+    <nav>
+        <h2>WeatherWise</h2>
+        <ul>
+            <li><a href="main.html">Home</a></li>
+            <li><a href="predict.html">Prediction</a></li>
+            <li><a href="retrain.html">Retrain Model</a></li>
+            <li><a href="visuals.html">Data Visualizations</a></li>
+        </ul>
+    </nav>
+    
+    <div class="content">
+        <div class="visualization-container">
+            <div class="visualization-header">
+                <h1>Weather Data Insights & Visualizations</h1>
+                <p>Explore key weather indicators and their relationships to weather patterns</p>
+            </div>
+            
+            <div class="visualization-grid">
+                <!-- Weather Distribution -->
+                <div class="visualization-card">
+                    <div class="card-header">
+                        <h2>Weather Distribution</h2>
+                        <div class="tooltip info-icon">
+                            ⓘ
+                            <span class="tooltiptext">Shows distribution of different weather types</span>
+                        </div>
+                    </div>
+                    <div class="visualization-image-container">
+                        <img src="/images/weather_distribution.png" alt="Weather Distribution Chart" class="visualization-image">
+                    </div>
+                    <div class="card-description">
+                        <p><b>Dataset composition analysis:</b></p>
+                        <p>This visualization shows the distribution of different weather types in our dataset. Understanding this distribution helps ensure our model is trained on a representative sample of weather conditions.</p>
+                    </div>
+                </div>
+                
+                <!-- Correlation Matrix -->
+                <div class="visualization-card">
+                    <div class="card-header">
+                        <h2>Feature Correlation</h2>
+                        <div class="tooltip info-icon">
+                            ⓘ
+                            <span class="tooltiptext">Reveals relationships between weather metrics</span>
+                        </div>
+                    </div>
+                    <div class="visualization-image-container">
+                        <img src="/images/correlation_heatmap.png" alt="Correlation Matrix" class="visualization-image">
+                    </div>
+                    <div class="card-description">
+                        <p><b>Key correlation insights:</b></p>
+                        <p>The correlation heatmap shows how different weather features relate to each other. Strong correlations help us understand which variables might be most predictive of weather conditions.</p>
+                    </div>
+                </div>
+                
+                <!-- Feature Distributions -->
+                <div class="visualization-card">
+                    <div class="card-header">
+                        <h2>Feature Distributions</h2>
+                        <div class="tooltip info-icon">
+                            ⓘ
+                            <span class="tooltiptext">Distribution of weather features</span>
+                        </div>
+                    </div>
+                    <div class="visualization-image-container">
+                        <img src="/images/feature_distributions.png" alt="Feature Distributions" class="visualization-image">
+                    </div>
+                    <div class="card-description">
+                        <p><b>Feature distribution analysis:</b></p>
+                        <p>These histograms show how different weather features are distributed. Understanding these distributions helps with feature engineering and ensuring our model handles different value ranges appropriately.</p>
+                    </div>
+                </div>
+                
+                <!-- Temperature vs Weather -->
+                <div class="visualization-card">
+                    <div class="card-header">
+                        <h2>Temperature Impact</h2>
+                        <div class="tooltip info-icon">
+                            ⓘ
+                            <span class="tooltiptext">How temperature relates to weather</span>
+                        </div>
+                    </div>
+                    <div class="visualization-image-container">
+                        <img src="/images/lag_temp_min_1_vs_weather.png" alt="Temperature vs Weather" class="visualization-image">
+                    </div>
+                    <div class="card-description">
+                        <p><b>Temperature's role in weather:</b></p>
+                        <p>This visualization shows how minimum temperature relates to different weather conditions. Temperature is often a key predictor in weather classification models.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="/js/visuals.js"></script>
+</body>
+</html>
