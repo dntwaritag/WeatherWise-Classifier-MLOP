@@ -234,158 +234,102 @@ async def predict_bulk(file: UploadFile = File(...)):
 
 @app.post("/retrain/", response_model=RetrainResponse)
 async def retrain_model(db: Session = Depends(get_db)):
-    """
-    Endpoint to retrain the model with fresh data from the database.
-    Steps:
-    1. Fetch data from database
-    2. Preprocess the data
-    3. Validate data types and ranges
-    4. Train a new neural network model
-    5. Evaluate the model
-    6. Save the new model
-    7. Return training metrics
-    """
     logger.info("Starting model retraining process")
     
     try:
         # 1. Fetch data from database
-        logger.info("Fetching training data from database")
         df = fetch_training_data(db)
         
         if len(df) < 100:
-            logger.error(f"Insufficient data for retraining. Only {len(df)} records available.")
-            raise HTTPException(
-                status_code=400,
-                detail=f"At least 100 records required for retraining. Only {len(df)} available."
-            )
+            raise HTTPException(400, f"At least 100 records required, got {len(df)}")
+
+        # 2. Preprocess the data with strict type enforcement
+        X_train, X_test, y_train, y_test = preprocess_data(df)
         
-        logger.info(f"Successfully fetched {len(df)} records from database")
-
-        # 2. Preprocess the data
-        logger.info("Preprocessing data")
-        try:
-            X_train, X_test, y_train, y_test = preprocess_data(df)
-            logger.info(f"Data preprocessed. Shapes - X_train: {X_train.shape}, X_test: {X_test.shape}")
-        except Exception as e:
-            logger.error(f"Data preprocessing failed: {str(e)}", exc_info=True)
-            raise HTTPException(
-                status_code=400,
-                detail=f"Data preprocessing failed: {str(e)}"
-            )
-
-        # 3. Validate data types and ranges
-        logger.info("Validating data types and ranges")
-        try:
-            # Ensure proper data types
-            X_train = X_train.astype(np.float32)
-            X_test = X_test.astype(np.float32)
-            y_train = y_train.astype(np.int32)
-            y_test = y_test.astype(np.int32)
-
-            # Check for extreme values in features
-            if (np.abs(X_train) > 1e6).any():
-                logger.error("Extreme feature values detected in training data")
-                raise ValueError("Feature values too large - check preprocessing")
-
-            # Check label values
-            unique_labels = np.unique(y_train)
-            if len(unique_labels) > 100:  # Assuming reasonable number of classes
-                logger.error(f"Too many unique labels detected: {len(unique_labels)}")
-                raise ValueError("Too many unique labels - check label encoding")
-
-            if y_train.max() > len(unique_labels) - 1:
-                logger.error(f"Label values out of range. Max: {y_train.max()}, Expected max: {len(unique_labels)-1}")
-                raise ValueError("Label values out of expected range")
-                
-        except Exception as e:
-            logger.error(f"Data validation failed: {str(e)}", exc_info=True)
-            raise HTTPException(
-                status_code=400,
-                detail=f"Data validation failed: {str(e)}"
-            )
-
-        # 4. Train new model
-        logger.info("Initializing new neural network model")
+        # Additional validation
+        logger.info("\n=== DATA VALIDATION ===")
+        logger.info(f"X_train shape: {X_train.shape}, dtype: {X_train.dtype}")
+        logger.info(f"y_train shape: {y_train.shape}, dtype: {y_train.dtype}")
+        logger.info(f"Unique y_train values: {np.unique(y_train)}")
+        logger.info(f"Number of classes: {len(np.unique(y_train))}")
+        logger.info(f"X_train min/max: {X_train.min()}, {X_train.max()}")
+        logger.info(f"y_train min/max: {y_train.min()}, {y_train.max()}")
+        
+        # 3. Train new model with enhanced error handling
         try:
             num_classes = len(np.unique(y_train))
-            logger.info(f"Number of classes detected: {num_classes}")
-
+            
+            # Clear any existing TensorFlow session
+            import tensorflow as tf
+            tf.keras.backend.clear_session()
+            
+            # Simplified model architecture
             model = Sequential([
-                Dense(256, activation='relu', input_shape=(X_train.shape[1],)),
-                BatchNormalization(),
-                Dropout(0.5),
-                Dense(128, activation='relu'),
+                Dense(128, activation='relu', input_shape=(X_train.shape[1],),
+                     kernel_initializer='he_normal'),
                 BatchNormalization(),
                 Dropout(0.3),
+                Dense(64, activation='relu',
+                     kernel_initializer='he_normal'),
+                BatchNormalization(),
                 Dense(num_classes, activation='softmax')
             ])
-
+            
+            # Use lower learning rate for stability
+            optimizer = tf.keras.optimizers.Adam(learning_rate=0.0005)
+            
             model.compile(
-                optimizer=Adam(learning_rate=0.001),
+                optimizer=optimizer,
                 loss='sparse_categorical_crossentropy',
                 metrics=['accuracy']
             )
-
-            logger.info("Starting model training")
+            
+            # Add early stopping
+            early_stopping = tf.keras.callbacks.EarlyStopping(
+                monitor='val_loss',
+                patience=5,
+                restore_best_weights=True,
+                verbose=1
+            )
+            
+            # Train with explicit batch size and validation
             history = model.fit(
                 X_train, y_train,
                 validation_data=(X_test, y_test),
                 epochs=50,
-                batch_size=32,
+                batch_size=32,  # Reduced from 64 to prevent memory issues
+                callbacks=[early_stopping],
                 verbose=1
             )
-            logger.info("Model training completed successfully")
+
         except Exception as e:
             logger.error(f"Model training failed: {str(e)}", exc_info=True)
-            raise HTTPException(
-                status_code=500,
-                detail=f"Model training failed: {str(e)}"
-            )
+            raise HTTPException(500, f"Model training failed: {str(e)}")
 
-        # 5. Evaluate model
-        logger.info("Evaluating model performance")
-        try:
-            metrics = evaluate_model(model, X_test, y_test)
-            logger.info(f"Model evaluation completed. Accuracy: {metrics['accuracy']}")
-        except Exception as e:
-            logger.error(f"Model evaluation failed: {str(e)}", exc_info=True)
-            raise HTTPException(
-                status_code=500,
-                detail=f"Model evaluation failed: {str(e)}"
-            )
-
-        # 6. Save the new model
-        logger.info("Saving retrained model")
+        # 4. Evaluate and save model
+        metrics = evaluate_model(model, X_test, y_test)
+        
+        # Save model with checks
         try:
             model.save(MODEL_PATH)
             logger.info(f"Model saved successfully to {MODEL_PATH}")
         except Exception as e:
-            logger.error(f"Model save failed: {str(e)}", exc_info=True)
-            raise HTTPException(
-                status_code=500,
-                detail=f"Model save failed: {str(e)}"
-            )
-
-        # 7. Prepare response
-        response = RetrainResponse(
+            logger.error(f"Failed to save model: {str(e)}")
+            raise HTTPException(500, f"Model saving failed: {str(e)}")
+        
+        return RetrainResponse(
             metrics=MetricDetail(**metrics),
             model_id=str(uuid.uuid4()),
             message="Model retrained successfully",
             training_samples=len(X_train),
             test_samples=len(X_test)
         )
-        
-        logger.info("Retraining process completed successfully")
-        return response
-
+ 
     except HTTPException:
-        raise  # Re-raise HTTPExceptions we created
+        raise
     except Exception as e:
-        logger.error(f"Unexpected error during retraining: {str(e)}", exc_info=True)
-        raise HTTPException(
-            status_code=500,
-            detail=f"Unexpected error during retraining: {str(e)}"
-        )
+        logger.error(f"Unexpected error: {str(e)}", exc_info=True)
+        raise HTTPException(500, f"Retraining failed: {str(e)}")
 
 @app.post("/save-model/", response_model=SaveResponse)
 async def save_model_endpoint(

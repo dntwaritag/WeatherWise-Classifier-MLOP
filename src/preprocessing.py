@@ -35,28 +35,14 @@ NUMERIC_RANGES = {
     "wind": (0, 100)
 }
 
-def load_data(file_path: str) -> pd.DataFrame:
-    """Loads and validates weather dataset with type checking"""
-    try:
-        df = pd.read_csv(file_path)
-        
-        # Basic validation
-        required_cols = ['precipitation', 'temp_max', 'temp_min', 'wind', 'weather']
-        missing = [col for col in required_cols if col not in df.columns]
-        if missing:
-            raise ValueError(f"Missing required columns: {missing}")
-            
-        # Convert numeric columns to float32 with range checking
-        for col, (min_val, max_val) in NUMERIC_RANGES.items():
-            if col in df.columns:
-                df[col] = pd.to_numeric(df[col], errors='coerce').astype(np.float32)
-                if (df[col] < min_val).any() or (df[col] > max_val).any():
-                    raise ValueError(f"Column {col} contains values outside expected range ({min_val}-{max_val})")
-        
-        return df
-    except Exception as e:
-        logging.error(f"Error loading data: {str(e)}")
-        raise
+# Define valid weather types and their expected encoding
+VALID_WEATHER_TYPES = {
+    'rain': 0,
+    'sun': 1,
+    'fog': 2,
+    'drizzle': 3,
+    'snow': 4
+}
 
 def preprocess_data(df: pd.DataFrame) -> Tuple[np.ndarray, np.ndarray, np.ndarray, np.ndarray]:
     """Preprocesses weather data with robust type handling and validation"""
@@ -77,9 +63,17 @@ def preprocess_data(df: pd.DataFrame) -> Tuple[np.ndarray, np.ndarray, np.ndarra
         if len(df_clean) == 0:
             raise ValueError("No valid data remaining after cleaning")
         
-        # Encode target variable
-        le = LabelEncoder()
-        y = le.fit_transform(df_clean['weather'])
+        # Validate and encode target variable
+        if not all(weather in VALID_WEATHER_TYPES for weather in df_clean['weather']):
+            invalid_types = set(df_clean['weather']) - set(VALID_WEATHER_TYPES.keys())
+            raise ValueError(f"Invalid weather types found: {invalid_types}")
+        
+        # Manual encoding to ensure consistent label values
+        y = np.array([VALID_WEATHER_TYPES[weather] for weather in df_clean['weather']], dtype=np.int32)
+        
+        # Validate label range (should be 0-4 based on VALID_WEATHER_TYPES)
+        if y.min() < 0 or y.max() >= len(VALID_WEATHER_TYPES):
+            raise ValueError(f"Encoded labels out of range (0-{len(VALID_WEATHER_TYPES)-1}): min={y.min()}, max={y.max()}")
         
         # Prepare features with type validation
         X = df_clean[EXPECTED_COLUMNS].astype(np.float32)
@@ -101,9 +95,9 @@ def preprocess_data(df: pd.DataFrame) -> Tuple[np.ndarray, np.ndarray, np.ndarra
         X_train_scaled = scaler.fit_transform(X_train)
         X_test_scaled = scaler.transform(X_test)
         
-        # Check for numerical issues after scaling
-        if np.any(np.abs(X_train_scaled) > 1e6):
-            logging.warning("Extremely large values detected after scaling")
+        # Clip values to prevent extreme numbers
+        X_train_scaled = np.clip(X_train_scaled, -5, 5).astype(np.float32)  # Tighter clipping range
+        X_test_scaled = np.clip(X_test_scaled, -5, 5).astype(np.float32)
         
         # Handle class imbalance safely
         class_counts = Counter(y_train)
@@ -113,13 +107,15 @@ def preprocess_data(df: pd.DataFrame) -> Tuple[np.ndarray, np.ndarray, np.ndarra
                 logging.info(f"Applying Random Over-Sampling (imbalance ratio: {imbalance_ratio:.2f})")
                 ros = RandomOverSampler(random_state=42)
                 X_train_scaled, y_train = ros.fit_resample(X_train_scaled, y_train)
+                y_train = y_train.astype(np.int32)
         
-        return (
-            X_train_scaled.astype(np.float32), 
-            X_test_scaled.astype(np.float32), 
-            y_train, 
-            y_test
-        )
+        # Final validation before returning
+        if X_train_scaled.dtype != np.float32 or X_test_scaled.dtype != np.float32:
+            raise ValueError("Feature arrays must be float32")
+        if y_train.dtype != np.int32 or y_test.dtype != np.int32:
+            raise ValueError("Label arrays must be int32")
+        
+        return X_train_scaled, X_test_scaled, y_train, y_test
         
     except Exception as e:
         logging.error(f"Preprocessing failed: {str(e)}", exc_info=True)
@@ -160,13 +156,33 @@ def fetch_training_data(db: Session) -> pd.DataFrame:
         if not records:
             raise ValueError("No training data found in database")
             
-        data = [{
-            'precipitation': float(r.precipitation),
-            'temp_max': float(r.temp_max),
-            'temp_min': float(r.temp_min),
-            'wind': float(r.wind),
-            'weather': str(r.weather)
-        } for r in records]
+        data = []
+        invalid_records = 0
+        
+        for r in records:
+            try:
+                # Validate weather type before processing
+                if r.weather not in VALID_WEATHER_TYPES:
+                    invalid_records += 1
+                    continue
+                    
+                data.append({
+                    'precipitation': float(r.precipitation),
+                    'temp_max': float(r.temp_max),
+                    'temp_min': float(r.temp_min),
+                    'wind': float(r.wind),
+                    'weather': str(r.weather)
+                })
+            except (ValueError, TypeError) as e:
+                invalid_records += 1
+                logging.warning(f"Skipping invalid record: {e}")
+                continue
+        
+        if invalid_records > 0:
+            logging.warning(f"Skipped {invalid_records} invalid records")
+            
+        if len(data) == 0:
+            raise ValueError("No valid weather records found after filtering")
         
         df = pd.DataFrame(data)
         

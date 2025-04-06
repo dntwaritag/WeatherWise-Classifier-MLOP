@@ -22,16 +22,29 @@ def evaluate_model(
     y_test: np.ndarray
 ) -> Dict[str, Any]:
     """
-    Evaluates model performance and returns comprehensive metrics.
+    Evaluates model performance with strict type checking
     """
-    y_pred = np.argmax(model.predict(X_test), axis=1)
+    # Convert and validate inputs
+    X_test = np.asarray(X_test, dtype=np.float32)
+    y_test = np.asarray(y_test, dtype=np.int32)
+    
+    # Validate shapes and types
+    if len(X_test.shape) != 2:
+        raise ValueError(f"X_test must be 2D array, got shape {X_test.shape}")
+    if len(y_test.shape) != 1:
+        raise ValueError(f"y_test must be 1D array, got shape {y_test.shape}")
+    
+    # Get predictions
+    y_pred = np.argmax(model.predict(X_test, verbose=0), axis=1)
+    
+    # Calculate metrics
     cm = confusion_matrix(y_test, y_pred)
     
     metrics = {
-        'accuracy': round(accuracy_score(y_test, y_pred), 4),
-        'precision': round(precision_score(y_test, y_pred, zero_division=0), 4),
-        'recall': round(recall_score(y_test, y_pred, zero_division=0), 4),
-        'f1': round(f1_score(y_test, y_pred, zero_division=0), 4),
+        'accuracy': round(float(accuracy_score(y_test, y_pred)), 4),
+        'precision': round(float(precision_score(y_test, y_pred, zero_division=0)), 4),
+        'recall': round(float(recall_score(y_test, y_pred, zero_division=0)), 4),
+        'f1': round(float(f1_score(y_test, y_pred, zero_division=0)), 4),
         'confusion_matrix': {
             'true_negative': int(cm[0, 0]),
             'false_positive': int(cm[0, 1]),

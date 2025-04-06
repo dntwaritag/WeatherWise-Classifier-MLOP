@@ -105,3 +105,265 @@ Traceback (most recent call last):
     tf.constant(0x80000000, dtype=tf.int32),
     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 OverflowError: Python int too large to convert to C long
+2025-04-05 12:08:12,924 - src.app.main - INFO - Starting training data upload
+2025-04-05 12:08:17,851 - src.app.main - INFO - Successfully added 1461 records, 0 invalid records
+2025-04-05 12:09:25,345 - src.app.main - INFO - Starting single prediction
+2025-04-05 12:09:26,009 - absl - WARNING - Compiled the loaded model, but the compiled metrics have yet to be built. `model.compile_metrics` will be empty until you train or evaluate the model.
+2025-04-05 12:09:26,834 - src.app.main - INFO - Successfully completed single prediction
+2025-04-05 12:10:02,645 - src.app.main - INFO - Starting bulk prediction
+2025-04-05 12:10:02,776 - absl - WARNING - Compiled the loaded model, but the compiled metrics have yet to be built. `model.compile_metrics` will be empty until you train or evaluate the model.
+2025-04-05 12:10:03,667 - src.app.main - INFO - Successfully completed bulk prediction for 1022 records
+2025-04-05 12:10:38,652 - src.app.main - INFO - Starting model retraining process
+2025-04-05 12:10:38,652 - src.app.main - INFO - Fetching training data from database
+2025-04-05 12:10:42,592 - src.app.main - INFO - Successfully fetched 20454 records from database
+2025-04-05 12:10:42,592 - src.app.main - INFO - Preprocessing data
+2025-04-05 12:10:42,667 - root - INFO - Applying Random Over-Sampling (imbalance ratio: 0.04)
+2025-04-05 12:10:42,682 - src.app.main - INFO - Data preprocessed. Shapes - X_train: (35895, 8), X_test: (4091, 8)
+2025-04-05 12:10:42,683 - src.app.main - INFO - Validating data types and ranges
+2025-04-05 12:10:42,687 - src.app.main - INFO - Initializing new neural network model
+2025-04-05 12:10:42,688 - src.app.main - INFO - Number of classes detected: 5
+2025-04-05 12:10:42,768 - src.app.main - INFO - Starting model training
+2025-04-05 12:10:44,428 - src.app.main - ERROR - Model training failed: Python int too large to convert to C long
+Traceback (most recent call last):
+  File "C:\Users\hp1\Desktop\MLOP\WeatherWise-Classifier-MLOP\src\app\main.py", line 330, in retrain_model
+    history = model.fit(
+              ^^^^^^^^^^
+  File "C:\Users\hp1\Desktop\MLOP\WeatherWise-Classifier-MLOP\venv\Lib\site-packages\keras\src\utils\traceback_utils.py", line 122, in error_handler
+    raise e.with_traceback(filtered_tb) from None
+  File "C:\Users\hp1\Desktop\MLOP\WeatherWise-Classifier-MLOP\venv\Lib\site-packages\keras\src\backend\tensorflow\numpy.py", line 2079, in signbit
+    tf.constant(0x80000000, dtype=tf.int32),
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+OverflowError: Python int too large to convert to C long
+2025-04-06 02:38:45,657 - src.app.main - INFO - Root endpoint accessed
+2025-04-06 02:39:28,980 - src.app.main - INFO - Starting model retraining process
+2025-04-06 02:39:28,983 - src.app.main - INFO - Fetching training data from database
+2025-04-06 02:39:36,341 - src.app.main - INFO - Successfully fetched 20454 records from database
+2025-04-06 02:39:36,342 - src.app.main - INFO - Preprocessing data
+2025-04-06 02:39:36,466 - root - INFO - Applying Random Over-Sampling (imbalance ratio: 0.04)
+2025-04-06 02:39:36,494 - src.app.main - INFO - Data preprocessed. Shapes - X_train: (35895, 8), X_test: (4091, 8)
+2025-04-06 02:39:36,495 - src.app.main - INFO - Validating data types and ranges
+2025-04-06 02:39:36,503 - src.app.main - INFO - Initializing new neural network model
+2025-04-06 02:39:36,507 - src.app.main - INFO - Number of classes detected: 5
+2025-04-06 02:39:37,076 - src.app.main - INFO - Starting model training
+2025-04-06 02:39:41,280 - src.app.main - ERROR - Model training failed: Python int too large to convert to C long
+Traceback (most recent call last):
+  File "C:\Users\hp1\Desktop\MLOP\WeatherWise-Classifier-MLOP\src\app\main.py", line 330, in retrain_model
+    history = model.fit(
+              ^^^^^^^^^^
+  File "C:\Users\hp1\Desktop\MLOP\WeatherWise-Classifier-MLOP\venv\Lib\site-packages\keras\src\utils\traceback_utils.py", line 122, in error_handler
+    raise e.with_traceback(filtered_tb) from None
+  File "C:\Users\hp1\Desktop\MLOP\WeatherWise-Classifier-MLOP\venv\Lib\site-packages\keras\src\backend\tensorflow\numpy.py", line 2079, in signbit
+    tf.constant(0x80000000, dtype=tf.int32),
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+OverflowError: Python int too large to convert to C long
+2025-04-06 03:22:35,853 - src.app.main - INFO - Root endpoint accessed
+2025-04-06 03:23:39,731 - src.app.main - INFO - Starting training data upload
+2025-04-06 03:23:44,593 - src.app.main - INFO - Successfully added 1461 records, 0 invalid records
+2025-04-06 03:23:54,508 - src.app.main - INFO - Starting single prediction
+2025-04-06 03:23:55,006 - absl - WARNING - Compiled the loaded model, but the compiled metrics have yet to be built. `model.compile_metrics` will be empty until you train or evaluate the model.
+2025-04-06 03:23:55,946 - src.app.main - INFO - Successfully completed single prediction
+2025-04-06 03:24:30,406 - src.app.main - INFO - Starting bulk prediction
+2025-04-06 03:24:30,621 - absl - WARNING - Compiled the loaded model, but the compiled metrics have yet to be built. `model.compile_metrics` will be empty until you train or evaluate the model.
+2025-04-06 03:24:31,726 - src.app.main - INFO - Successfully completed bulk prediction for 1022 records
+2025-04-06 03:24:55,036 - src.app.main - INFO - Starting model retraining process
+2025-04-06 03:24:55,037 - src.app.main - INFO - Fetching training data from database
+2025-04-06 03:24:59,506 - src.app.main - INFO - Successfully fetched 21915 records from database
+2025-04-06 03:24:59,507 - src.app.main - INFO - Preprocessing data
+2025-04-06 03:24:59,598 - root - INFO - Applying Random Over-Sampling (imbalance ratio: 0.04)
+2025-04-06 03:24:59,619 - src.app.main - INFO - Data preprocessed. Shapes - X_train: (38460, 8), X_test: (4383, 8)
+2025-04-06 03:24:59,620 - src.app.main - INFO - Validating data types and ranges
+2025-04-06 03:24:59,626 - src.app.main - INFO - Initializing new neural network model
+2025-04-06 03:24:59,630 - src.app.main - INFO - Number of classes detected: 5
+2025-04-06 03:24:59,750 - src.app.main - INFO - Starting model training
+2025-04-06 03:25:01,760 - src.app.main - ERROR - Model training failed: Python int too large to convert to C long
+Traceback (most recent call last):
+  File "C:\Users\hp1\Desktop\MLOP\WeatherWise-Classifier-MLOP\src\app\main.py", line 330, in retrain_model
+    history = model.fit(
+              ^^^^^^^^^^
+  File "C:\Users\hp1\Desktop\MLOP\WeatherWise-Classifier-MLOP\venv\Lib\site-packages\keras\src\utils\traceback_utils.py", line 122, in error_handler
+    raise e.with_traceback(filtered_tb) from None
+  File "C:\Users\hp1\Desktop\MLOP\WeatherWise-Classifier-MLOP\venv\Lib\site-packages\keras\src\backend\tensorflow\numpy.py", line 2079, in signbit
+    tf.constant(0x80000000, dtype=tf.int32),
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+OverflowError: Python int too large to convert to C long
+2025-04-06 03:44:37,736 - src.app.main - INFO - Root endpoint accessed
+2025-04-06 03:45:08,729 - src.app.main - INFO - Starting training data upload
+2025-04-06 03:45:12,587 - src.app.main - INFO - Successfully added 1461 records, 0 invalid records
+2025-04-06 03:45:27,723 - src.app.main - INFO - Starting single prediction
+2025-04-06 03:45:28,348 - absl - WARNING - Compiled the loaded model, but the compiled metrics have yet to be built. `model.compile_metrics` will be empty until you train or evaluate the model.
+2025-04-06 03:45:29,062 - src.app.main - INFO - Successfully completed single prediction
+2025-04-06 03:46:01,199 - src.app.main - INFO - Starting bulk prediction
+2025-04-06 03:46:01,309 - absl - WARNING - Compiled the loaded model, but the compiled metrics have yet to be built. `model.compile_metrics` will be empty until you train or evaluate the model.
+2025-04-06 03:46:01,936 - src.app.main - INFO - Successfully completed bulk prediction for 1022 records
+2025-04-06 03:46:19,197 - src.app.main - INFO - Starting model retraining process
+2025-04-06 03:46:29,435 - root - INFO - Applying Random Over-Sampling (imbalance ratio: 0.04)
+2025-04-06 03:46:30,857 - src.app.main - ERROR - Model training failed: Python int too large to convert to C long
+Traceback (most recent call last):
+  File "C:\Users\hp1\Desktop\MLOP\WeatherWise-Classifier-MLOP\src\app\main.py", line 273, in retrain_model
+    history = model.fit(
+              ^^^^^^^^^^
+  File "C:\Users\hp1\Desktop\MLOP\WeatherWise-Classifier-MLOP\venv\Lib\site-packages\keras\src\utils\traceback_utils.py", line 122, in error_handler
+    raise e.with_traceback(filtered_tb) from None
+  File "C:\Users\hp1\Desktop\MLOP\WeatherWise-Classifier-MLOP\venv\Lib\site-packages\keras\src\backend\tensorflow\numpy.py", line 2079, in signbit
+    tf.constant(0x80000000, dtype=tf.int32),
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+OverflowError: Python int too large to convert to C long
+2025-04-06 03:57:37,981 - src.app.main - INFO - Root endpoint accessed
+2025-04-06 04:01:13,048 - src.app.main - INFO - Starting bulk prediction
+2025-04-06 04:01:13,653 - absl - WARNING - Compiled the loaded model, but the compiled metrics have yet to be built. `model.compile_metrics` will be empty until you train or evaluate the model.
+2025-04-06 04:01:14,618 - src.app.main - INFO - Successfully completed bulk prediction for 1022 records
+2025-04-06 04:01:25,996 - src.app.main - INFO - Starting model retraining process
+2025-04-06 04:01:29,962 - root - INFO - Applying Random Over-Sampling (imbalance ratio: 0.04)
+2025-04-06 04:01:31,684 - src.app.main - ERROR - Model training failed: Python int too large to convert to C long
+Traceback (most recent call last):
+  File "C:\Users\hp1\Desktop\MLOP\WeatherWise-Classifier-MLOP\src\app\main.py", line 273, in retrain_model
+    history = model.fit(
+              ^^^^^^^^^^
+  File "C:\Users\hp1\Desktop\MLOP\WeatherWise-Classifier-MLOP\venv\Lib\site-packages\keras\src\utils\traceback_utils.py", line 122, in error_handler
+    raise e.with_traceback(filtered_tb) from None
+  File "C:\Users\hp1\Desktop\MLOP\WeatherWise-Classifier-MLOP\venv\Lib\site-packages\keras\src\backend\tensorflow\numpy.py", line 2079, in signbit
+    tf.constant(0x80000000, dtype=tf.int32),
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+OverflowError: Python int too large to convert to C long
+2025-04-06 04:46:46,074 - src.app.main - INFO - Root endpoint accessed
+2025-04-06 04:47:18,722 - src.app.main - INFO - Starting model retraining process
+2025-04-06 04:47:22,384 - root - INFO - Applying Random Over-Sampling (imbalance ratio: 0.04)
+2025-04-06 04:47:22,400 - src.app.main - INFO - 
+=== DATA VALIDATION ===
+2025-04-06 04:47:22,400 - src.app.main - INFO - X_train shape: (41025, 8), dtype: float32
+2025-04-06 04:47:22,401 - src.app.main - INFO - y_train shape: (41025,), dtype: int32
+2025-04-06 04:47:22,403 - src.app.main - INFO - Unique y_train values: [0 1 2 3 4]
+2025-04-06 04:47:22,404 - src.app.main - INFO - X_train min/max: -3.07204008102417, 7.999026775360107
+2025-04-06 04:47:22,404 - src.app.main - INFO - y_train min/max: 0, 4
+2025-04-06 04:47:24,563 - src.app.main - ERROR - Model training failed: Python int too large to convert to C long
+Traceback (most recent call last):
+  File "C:\Users\hp1\Desktop\MLOP\WeatherWise-Classifier-MLOP\src\app\main.py", line 279, in retrain_model
+    history = model.fit(
+              ^^^^^^^^^^
+  File "C:\Users\hp1\Desktop\MLOP\WeatherWise-Classifier-MLOP\venv\Lib\site-packages\keras\src\utils\traceback_utils.py", line 122, in error_handler
+    raise e.with_traceback(filtered_tb) from None
+  File "C:\Users\hp1\Desktop\MLOP\WeatherWise-Classifier-MLOP\venv\Lib\site-packages\keras\src\backend\tensorflow\numpy.py", line 2079, in signbit
+    tf.constant(0x80000000, dtype=tf.int32),
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+OverflowError: Python int too large to convert to C long
+2025-04-06 04:49:54,736 - src.app.main - INFO - Starting bulk prediction
+2025-04-06 04:49:55,149 - absl - WARNING - Compiled the loaded model, but the compiled metrics have yet to be built. `model.compile_metrics` will be empty until you train or evaluate the model.
+2025-04-06 04:49:56,191 - src.app.main - INFO - Successfully completed bulk prediction for 1022 records
+2025-04-06 04:50:04,967 - src.app.main - INFO - Starting model retraining process
+2025-04-06 04:50:09,488 - root - INFO - Applying Random Over-Sampling (imbalance ratio: 0.04)
+2025-04-06 04:50:09,507 - src.app.main - INFO - 
+=== DATA VALIDATION ===
+2025-04-06 04:50:09,508 - src.app.main - INFO - X_train shape: (41025, 8), dtype: float32
+2025-04-06 04:50:09,508 - src.app.main - INFO - y_train shape: (41025,), dtype: int32
+2025-04-06 04:50:09,510 - src.app.main - INFO - Unique y_train values: [0 1 2 3 4]
+2025-04-06 04:50:09,511 - src.app.main - INFO - X_train min/max: -3.07204008102417, 7.999026775360107
+2025-04-06 04:50:09,511 - src.app.main - INFO - y_train min/max: 0, 4
+2025-04-06 04:50:11,049 - src.app.main - ERROR - Model training failed: Python int too large to convert to C long
+Traceback (most recent call last):
+  File "C:\Users\hp1\Desktop\MLOP\WeatherWise-Classifier-MLOP\src\app\main.py", line 279, in retrain_model
+    history = model.fit(
+              ^^^^^^^^^^
+  File "C:\Users\hp1\Desktop\MLOP\WeatherWise-Classifier-MLOP\venv\Lib\site-packages\keras\src\utils\traceback_utils.py", line 122, in error_handler
+    raise e.with_traceback(filtered_tb) from None
+  File "C:\Users\hp1\Desktop\MLOP\WeatherWise-Classifier-MLOP\venv\Lib\site-packages\keras\src\backend\tensorflow\numpy.py", line 2079, in signbit
+    tf.constant(0x80000000, dtype=tf.int32),
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+OverflowError: Python int too large to convert to C long
+2025-04-06 04:55:21,318 - src.app.main - INFO - Starting model retraining process
+2025-04-06 04:55:25,029 - root - INFO - Applying Random Over-Sampling (imbalance ratio: 0.04)
+2025-04-06 04:55:25,045 - src.app.main - INFO - 
+=== DATA VALIDATION ===
+2025-04-06 04:55:25,046 - src.app.main - INFO - X_train shape: (41025, 8), dtype: float32
+2025-04-06 04:55:25,046 - src.app.main - INFO - y_train shape: (41025,), dtype: int32
+2025-04-06 04:55:25,047 - src.app.main - INFO - Unique y_train values: [0 1 2 3 4]
+2025-04-06 04:55:25,048 - src.app.main - INFO - Number of classes: 5
+2025-04-06 04:55:25,049 - src.app.main - INFO - X_train min/max: -3.07204008102417, 7.999026775360107
+2025-04-06 04:55:25,049 - src.app.main - INFO - y_train min/max: 0, 4
+2025-04-06 04:55:29,049 - tensorflow - WARNING - From C:\Users\hp1\Desktop\MLOP\WeatherWise-Classifier-MLOP\venv\Lib\site-packages\keras\src\backend\common\global_state.py:82: The name tf.reset_default_graph is deprecated. Please use tf.compat.v1.reset_default_graph instead.
+
+2025-04-06 04:55:31,362 - src.app.main - ERROR - Model training failed: Python int too large to convert to C long
+Traceback (most recent call last):
+  File "C:\Users\hp1\Desktop\MLOP\WeatherWise-Classifier-MLOP\src\app\main.py", line 296, in retrain_model
+    history = model.fit(
+              ^^^^^^^^^^
+  File "C:\Users\hp1\Desktop\MLOP\WeatherWise-Classifier-MLOP\venv\Lib\site-packages\keras\src\utils\traceback_utils.py", line 122, in error_handler
+    raise e.with_traceback(filtered_tb) from None
+  File "C:\Users\hp1\Desktop\MLOP\WeatherWise-Classifier-MLOP\venv\Lib\site-packages\keras\src\backend\tensorflow\numpy.py", line 2079, in signbit
+    tf.constant(0x80000000, dtype=tf.int32),
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+OverflowError: Python int too large to convert to C long
+2025-04-06 05:48:23,091 - src.app.main - INFO - Root endpoint accessed
+2025-04-06 05:48:41,819 - src.app.main - INFO - Starting model retraining process
+2025-04-06 05:48:45,329 - root - INFO - Applying Random Over-Sampling (imbalance ratio: 0.04)
+2025-04-06 05:48:45,346 - src.app.main - INFO - 
+=== DATA VALIDATION ===
+2025-04-06 05:48:45,346 - src.app.main - INFO - X_train shape: (41025, 8), dtype: float32
+2025-04-06 05:48:45,347 - src.app.main - INFO - y_train shape: (41025,), dtype: int32
+2025-04-06 05:48:45,349 - src.app.main - INFO - Unique y_train values: [0 1 2 3 4]
+2025-04-06 05:48:45,350 - src.app.main - INFO - Number of classes: 5
+2025-04-06 05:48:45,351 - src.app.main - INFO - X_train min/max: -3.0607669353485107, 5.0
+2025-04-06 05:48:45,351 - src.app.main - INFO - y_train min/max: 0, 4
+2025-04-06 05:48:46,573 - tensorflow - WARNING - From C:\Users\hp1\Desktop\MLOP\WeatherWise-Classifier-MLOP\venv\Lib\site-packages\keras\src\backend\common\global_state.py:82: The name tf.reset_default_graph is deprecated. Please use tf.compat.v1.reset_default_graph instead.
+
+2025-04-06 05:48:48,613 - src.app.main - ERROR - Model training failed: Python int too large to convert to C long
+Traceback (most recent call last):
+  File "C:\Users\hp1\Desktop\MLOP\WeatherWise-Classifier-MLOP\src\app\main.py", line 296, in retrain_model
+    history = model.fit(
+              ^^^^^^^^^^
+  File "C:\Users\hp1\Desktop\MLOP\WeatherWise-Classifier-MLOP\venv\Lib\site-packages\keras\src\utils\traceback_utils.py", line 122, in error_handler
+    raise e.with_traceback(filtered_tb) from None
+  File "C:\Users\hp1\Desktop\MLOP\WeatherWise-Classifier-MLOP\venv\Lib\site-packages\keras\src\backend\tensorflow\numpy.py", line 2079, in signbit
+    tf.constant(0x80000000, dtype=tf.int32),
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+OverflowError: Python int too large to convert to C long
+2025-04-06 06:14:47,909 - src.app.main - INFO - Starting model retraining process
+2025-04-06 06:14:51,348 - src.app.main - INFO - 
+=== DATA VALIDATION ===
+2025-04-06 06:14:51,349 - src.app.main - INFO - Raw data shape: (23376, 5)
+2025-04-06 06:14:51,349 - src.app.main - INFO - Columns in data: ['precipitation', 'temp_max', 'temp_min', 'wind', 'weather']
+2025-04-06 06:14:51,362 - src.app.main - INFO - Class distribution:
+weather
+rain       10256
+sun        10240
+fog         1616
+drizzle      848
+snow         416
+Name: count, dtype: int64
+2025-04-06 06:14:51,443 - root - INFO - Applying Random Over-Sampling (imbalance ratio: 0.04)
+2025-04-06 06:14:52,986 - tensorflow - WARNING - From C:\Users\hp1\Desktop\MLOP\WeatherWise-Classifier-MLOP\venv\Lib\site-packages\keras\src\backend\common\global_state.py:82: The name tf.reset_default_graph is deprecated. Please use tf.compat.v1.reset_default_graph instead.
+
+2025-04-06 06:14:55,514 - src.app.main - ERROR - Model training failed: Python int too large to convert to C long
+Traceback (most recent call last):
+  File "C:\Users\hp1\Desktop\MLOP\WeatherWise-Classifier-MLOP\src\app\main.py", line 311, in retrain_model
+    history = model.fit(
+              ^^^^^^^^^^
+  File "C:\Users\hp1\Desktop\MLOP\WeatherWise-Classifier-MLOP\venv\Lib\site-packages\keras\src\utils\traceback_utils.py", line 122, in error_handler
+    raise e.with_traceback(filtered_tb) from None
+  File "C:\Users\hp1\Desktop\MLOP\WeatherWise-Classifier-MLOP\venv\Lib\site-packages\keras\src\backend\tensorflow\numpy.py", line 2079, in signbit
+    tf.constant(0x80000000, dtype=tf.int32),
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+OverflowError: Python int too large to convert to C long
+2025-04-06 06:14:55,577 - src.app.main - ERROR - HTTP Error during retraining: Model training failed: Python int too large to convert to C long
+2025-04-06 06:17:14,811 - src.app.main - INFO - Starting model retraining process
+2025-04-06 06:17:18,420 - root - INFO - Applying Random Over-Sampling (imbalance ratio: 0.04)
+2025-04-06 06:17:18,432 - src.app.main - INFO - 
+=== DATA VALIDATION ===
+2025-04-06 06:17:18,433 - src.app.main - INFO - X_train shape: (41025, 8), dtype: float32
+2025-04-06 06:17:18,434 - src.app.main - INFO - y_train shape: (41025,), dtype: int32
+2025-04-06 06:17:18,435 - src.app.main - INFO - Unique y_train values: [0 1 2 3 4]
+2025-04-06 06:17:18,436 - src.app.main - INFO - Number of classes: 5
+2025-04-06 06:17:18,437 - src.app.main - INFO - X_train min/max: -3.0607669353485107, 5.0
+2025-04-06 06:17:18,438 - src.app.main - INFO - y_train min/max: 0, 4
+2025-04-06 06:17:20,074 - tensorflow - WARNING - From C:\Users\hp1\Desktop\MLOP\WeatherWise-Classifier-MLOP\venv\Lib\site-packages\keras\src\backend\common\global_state.py:82: The name tf.reset_default_graph is deprecated. Please use tf.compat.v1.reset_default_graph instead.
+
+2025-04-06 06:17:22,131 - src.app.main - ERROR - Model training failed: Python int too large to convert to C long
+Traceback (most recent call last):
+  File "C:\Users\hp1\Desktop\MLOP\WeatherWise-Classifier-MLOP\src\app\main.py", line 296, in retrain_model
+    history = model.fit(
+              ^^^^^^^^^^
+  File "C:\Users\hp1\Desktop\MLOP\WeatherWise-Classifier-MLOP\venv\Lib\site-packages\keras\src\utils\traceback_utils.py", line 122, in error_handler
+    raise e.with_traceback(filtered_tb) from None
+  File "C:\Users\hp1\Desktop\MLOP\WeatherWise-Classifier-MLOP\venv\Lib\site-packages\keras\src\backend\tensorflow\numpy.py", line 2079, in signbit
+    tf.constant(0x80000000, dtype=tf.int32),
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+OverflowError: Python int too large to convert to C long
