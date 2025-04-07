@@ -2,6 +2,7 @@ from fastapi import FastAPI, UploadFile, File, HTTPException, Depends
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 import pandas as pd
+from fastapi.staticfiles import StaticFiles
 from datetime import datetime, timedelta
 import uvicorn
 import os
@@ -141,9 +142,12 @@ def cleanup_old_models():
                 pass
 
 # API Endpoints
+app.mount("/static", StaticFiles(directory="src/app/static"), name="static")
+
+# Update your favicon endpoint
 @app.get('/favicon.ico', include_in_schema=False)
 async def favicon():
-    return FileResponse('path/to/favicon.ico')
+    return FileResponse('src/app/static/favicon.ico')
 
 @app.post("/upload-training-data/", response_model=BulkUploadResponse)
 async def upload_training_data(

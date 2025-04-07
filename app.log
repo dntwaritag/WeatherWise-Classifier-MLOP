@@ -895,3 +895,31 @@ Model Evaluation:
 2025-04-06 20:16:57,723 - src.app.main - INFO - Model saved successfully to models/model_9821ff36-098c-4096-bc85-646b60d66cc6.h5
 2025-04-06 20:17:44,180 - src.app.main - INFO - Starting model save operation
 2025-04-06 20:17:44,231 - src.app.main - INFO - Successfully saved model to models/model_9821ff36-098c-4096-bc85-646b60d66cc6.h5
+2025-04-07 07:24:37,303 - src.app.main - INFO - Root endpoint accessed
+2025-04-07 07:24:58,363 - src.app.main - INFO - Starting model retraining process
+2025-04-07 07:25:11,563 - root - INFO - Applying Random Over-Sampling (imbalance ratio: 0.04)
+2025-04-07 07:25:11,573 - src.app.main - INFO - 
+=== DATA VALIDATION ===
+2025-04-07 07:25:11,574 - src.app.main - INFO - X_train shape: (53845, 8), dtype: float32
+2025-04-07 07:25:11,574 - src.app.main - INFO - y_train shape: (53845,), dtype: int32
+2025-04-07 07:25:11,576 - src.app.main - INFO - Unique y_train values: [0 1 2 3 4]
+2025-04-07 07:25:11,578 - src.app.main - INFO - Number of classes: 5
+2025-04-07 07:25:11,578 - src.app.main - INFO - X_train min/max: -3.0688929557800293, 5.0
+2025-04-07 07:25:11,580 - src.app.main - INFO - y_train min/max: 0, 4
+2025-04-07 07:30:14,149 - src.app.main - INFO - Generated model ID: 4a0fe5b6-0421-4990-b672-779ba0159efe
+2025-04-07 07:30:15,269 - root - INFO - 
+Model Evaluation:
+2025-04-07 07:30:15,270 - root - INFO - Accuracy: 0.9684
+2025-04-07 07:30:15,270 - root - INFO - Precision: 0.9247
+2025-04-07 07:30:15,270 - root - INFO - Recall: 0.9856
+2025-04-07 07:30:15,271 - root - INFO - F1 Score: 0.9501
+2025-04-07 07:30:15,273 - root - INFO - Confusion Matrix:
+[[2603   77    8    4    0]
+ [   0 2583   19   86    0]
+ [   0    0  424    0    0]
+ [   0    0    0  223    0]
+ [   0    0    0    0  109]]
+2025-04-07 07:30:15,428 - src.app.main - INFO - Model saved successfully to models/model_4a0fe5b6-0421-4990-b672-779ba0159efe.h5
+2025-04-07 07:30:58,748 - src.app.main - INFO - Starting model save operation
+2025-04-07 07:30:58,824 - src.app.main - INFO - Successfully saved model to models/model_4a0fe5b6-0421-4990-b672-779ba0159efe.h5
+2025-04-07 13:30:40,005 - src.app.main - INFO - Root endpoint accessed
