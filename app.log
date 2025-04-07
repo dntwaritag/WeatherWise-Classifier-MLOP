@@ -367,3 +367,531 @@ Traceback (most recent call last):
     tf.constant(0x80000000, dtype=tf.int32),
     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 OverflowError: Python int too large to convert to C long
+2025-04-06 15:47:10,060 - src.app.main - INFO - Root endpoint accessed
+2025-04-06 15:47:42,734 - src.app.main - INFO - Starting training data upload
+2025-04-06 15:47:46,627 - src.app.main - INFO - Successfully added 1461 records, 0 invalid records
+2025-04-06 15:47:56,104 - src.app.main - INFO - Starting single prediction
+2025-04-06 15:47:56,513 - absl - WARNING - Compiled the loaded model, but the compiled metrics have yet to be built. `model.compile_metrics` will be empty until you train or evaluate the model.
+2025-04-06 15:47:57,132 - src.app.main - INFO - Successfully completed single prediction
+2025-04-06 15:49:30,364 - src.app.main - INFO - Starting bulk prediction
+2025-04-06 15:49:30,461 - absl - WARNING - Compiled the loaded model, but the compiled metrics have yet to be built. `model.compile_metrics` will be empty until you train or evaluate the model.
+2025-04-06 15:49:31,176 - src.app.main - INFO - Successfully completed bulk prediction for 1022 records
+2025-04-06 15:49:52,890 - src.app.main - INFO - Starting model retraining process
+2025-04-06 15:49:56,773 - root - INFO - Applying Random Over-Sampling (imbalance ratio: 0.04)
+2025-04-06 15:49:56,792 - src.app.main - INFO - 
+=== DATA VALIDATION ===
+2025-04-06 15:49:56,793 - src.app.main - INFO - X_train shape: (43585, 8), dtype: float32
+2025-04-06 15:49:56,794 - src.app.main - INFO - y_train shape: (43585,), dtype: int32
+2025-04-06 15:49:56,796 - src.app.main - INFO - Unique y_train values: [0 1 2 3 4]
+2025-04-06 15:49:56,797 - src.app.main - INFO - Number of classes: 5
+2025-04-06 15:49:56,798 - src.app.main - INFO - X_train min/max: -3.067516803741455, 5.0
+2025-04-06 15:49:56,799 - src.app.main - INFO - y_train min/max: 0, 4
+2025-04-06 15:49:58,692 - tensorflow - WARNING - From C:\Users\hp1\Desktop\MLOP\WeatherWise-Classifier-MLOP\venv\Lib\site-packages\keras\src\backend\common\global_state.py:82: The name tf.reset_default_graph is deprecated. Please use tf.compat.v1.reset_default_graph instead.
+
+2025-04-06 15:50:00,249 - src.app.main - ERROR - Model training failed: Python int too large to convert to C long
+Traceback (most recent call last):
+  File "C:\Users\hp1\Desktop\MLOP\WeatherWise-Classifier-MLOP\src\app\main.py", line 296, in retrain_model
+    history = model.fit(
+              ^^^^^^^^^^
+  File "C:\Users\hp1\Desktop\MLOP\WeatherWise-Classifier-MLOP\venv\Lib\site-packages\keras\src\utils\traceback_utils.py", line 122, in error_handler
+    raise e.with_traceback(filtered_tb) from None
+  File "C:\Users\hp1\Desktop\MLOP\WeatherWise-Classifier-MLOP\venv\Lib\site-packages\keras\src\backend\tensorflow\numpy.py", line 2079, in signbit
+    tf.constant(0x80000000, dtype=tf.int32),
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+OverflowError: Python int too large to convert to C long
+2025-04-06 16:19:53,867 - src.app.main - INFO - Root endpoint accessed
+2025-04-06 16:20:25,393 - src.app.main - INFO - Root endpoint accessed
+2025-04-06 16:20:41,726 - src.app.main - INFO - Starting model retraining process
+2025-04-06 16:20:46,929 - root - INFO - Applying Random Over-Sampling (imbalance ratio: 0.04)
+2025-04-06 16:20:46,947 - src.app.main - INFO - 
+=== DATA VALIDATION ===
+2025-04-06 16:20:46,948 - src.app.main - INFO - X_train shape: (43585, 8), dtype: float32
+2025-04-06 16:20:46,948 - src.app.main - INFO - y_train shape: (43585,), dtype: int32
+2025-04-06 16:20:46,951 - src.app.main - INFO - Unique y_train values: [0 1 2 3 4]
+2025-04-06 16:20:46,953 - src.app.main - INFO - Number of classes: 5
+2025-04-06 16:20:46,954 - src.app.main - INFO - X_train min/max: -3.067516803741455, 5.0
+2025-04-06 16:20:46,957 - src.app.main - INFO - y_train min/max: 0, 4
+2025-04-06 16:23:14,861 - src.app.main - ERROR - Unexpected error: Target is multiclass but average='binary'. Please choose another average setting, one of [None, 'micro', 'macro', 'weighted'].
+Traceback (most recent call last):
+  File "C:\Users\hp1\Desktop\MLOP\WeatherWise-Classifier-MLOP\src\app\main.py", line 310, in retrain_model
+    metrics = evaluate_model(model, X_test, y_test)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\hp1\Desktop\MLOP\WeatherWise-Classifier-MLOP\src\model.py", line 45, in evaluate_model
+    'precision': round(float(precision_score(y_test, y_pred, zero_division=0)), 4),
+                             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\hp1\Desktop\MLOP\WeatherWise-Classifier-MLOP\venv\Lib\site-packages\sklearn\utils\_param_validation.py", line 213, in wrapper
+    return func(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\hp1\Desktop\MLOP\WeatherWise-Classifier-MLOP\venv\Lib\site-packages\sklearn\metrics\_classification.py", line 2182, in precision_score
+    p, _, _, _ = precision_recall_fscore_support(
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\hp1\Desktop\MLOP\WeatherWise-Classifier-MLOP\venv\Lib\site-packages\sklearn\utils\_param_validation.py", line 186, in wrapper
+    return func(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\hp1\Desktop\MLOP\WeatherWise-Classifier-MLOP\venv\Lib\site-packages\sklearn\metrics\_classification.py", line 1767, in precision_recall_fscore_support
+    labels = _check_set_wise_labels(y_true, y_pred, average, labels, pos_label)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\hp1\Desktop\MLOP\WeatherWise-Classifier-MLOP\venv\Lib\site-packages\sklearn\metrics\_classification.py", line 1556, in _check_set_wise_labels
+    raise ValueError(
+ValueError: Target is multiclass but average='binary'. Please choose another average setting, one of [None, 'micro', 'macro', 'weighted'].
+2025-04-06 16:42:22,238 - src.app.main - INFO - Root endpoint accessed
+2025-04-06 16:42:37,537 - src.app.main - INFO - Starting model retraining process
+2025-04-06 16:42:54,444 - root - INFO - Applying Random Over-Sampling (imbalance ratio: 0.04)
+2025-04-06 16:42:54,454 - src.app.main - INFO - 
+=== DATA VALIDATION ===
+2025-04-06 16:42:54,454 - src.app.main - INFO - X_train shape: (43585, 8), dtype: float32
+2025-04-06 16:42:54,455 - src.app.main - INFO - y_train shape: (43585,), dtype: int32
+2025-04-06 16:42:54,455 - src.app.main - INFO - Unique y_train values: [0 1 2 3 4]
+2025-04-06 16:42:54,456 - src.app.main - INFO - Number of classes: 5
+2025-04-06 16:42:54,457 - src.app.main - INFO - X_train min/max: -3.067516803741455, 5.0
+2025-04-06 16:42:54,457 - src.app.main - INFO - y_train min/max: 0, 4
+2025-04-06 16:45:54,404 - root - INFO - 
+Model Evaluation:
+2025-04-06 16:45:54,405 - root - INFO - Accuracy: 0.9575
+2025-04-06 16:45:54,405 - root - INFO - Precision: 0.8989
+2025-04-06 16:45:54,405 - root - INFO - Recall: 0.9806
+2025-04-06 16:45:54,405 - root - INFO - F1 Score: 0.9346
+2025-04-06 16:45:54,406 - root - INFO - Confusion Matrix:
+[[2097   71    7    0    5]
+ [   4 2048   68   56    0]
+ [   0    0  344    0    0]
+ [   0    0    0  180    0]
+ [   0    0    0    0   88]]
+2025-04-06 16:45:54,507 - src.app.main - INFO - Model saved successfully to C:\Users\hp1\Desktop\MLOP\WeatherWise-Classifier-MLOP\models\neural_network_model.h5
+2025-04-06 16:45:54,511 - src.app.main - ERROR - Unexpected error: 1 validation error for MetricDetail
+confusion_matrix
+  value is not a valid dict (type=type_error.dict)
+Traceback (most recent call last):
+  File "C:\Users\hp1\Desktop\MLOP\WeatherWise-Classifier-MLOP\src\app\main.py", line 321, in retrain_model
+    metrics=MetricDetail(**metrics),
+            ^^^^^^^^^^^^^^^^^^^^^^^
+  File "pydantic\main.py", line 341, in pydantic.main.BaseModel.__init__
+pydantic.error_wrappers.ValidationError: 1 validation error for MetricDetail
+confusion_matrix
+  value is not a valid dict (type=type_error.dict)
+2025-04-06 17:11:20,696 - src.app.main - INFO - Starting training data upload
+2025-04-06 17:11:24,934 - src.app.main - INFO - Successfully added 1461 records, 0 invalid records
+2025-04-06 17:11:34,805 - src.app.main - INFO - Starting single prediction
+2025-04-06 17:11:36,194 - src.app.main - INFO - Successfully completed single prediction
+2025-04-06 17:12:09,562 - src.app.main - INFO - Starting bulk prediction
+2025-04-06 17:12:10,539 - src.app.main - INFO - Successfully completed bulk prediction for 1022 records
+2025-04-06 17:12:30,407 - src.app.main - INFO - Starting model retraining process
+2025-04-06 17:12:34,670 - root - INFO - Applying Random Over-Sampling (imbalance ratio: 0.04)
+2025-04-06 17:12:34,693 - src.app.main - INFO - 
+=== DATA VALIDATION ===
+2025-04-06 17:12:34,694 - src.app.main - INFO - X_train shape: (46150, 8), dtype: float32
+2025-04-06 17:12:34,694 - src.app.main - INFO - y_train shape: (46150,), dtype: int32
+2025-04-06 17:12:34,696 - src.app.main - INFO - Unique y_train values: [0 1 2 3 4]
+2025-04-06 17:12:34,698 - src.app.main - INFO - Number of classes: 5
+2025-04-06 17:12:34,700 - src.app.main - INFO - X_train min/max: -3.0706639289855957, 5.0
+2025-04-06 17:12:34,700 - src.app.main - INFO - y_train min/max: 0, 4
+2025-04-06 17:16:20,400 - root - INFO - 
+Model Evaluation:
+2025-04-06 17:16:20,400 - root - INFO - Accuracy: 0.9721
+2025-04-06 17:16:20,400 - root - INFO - Precision: 0.9309
+2025-04-06 17:16:20,401 - root - INFO - Recall: 0.9873
+2025-04-06 17:16:20,401 - root - INFO - F1 Score: 0.9568
+2025-04-06 17:16:20,401 - root - INFO - Confusion Matrix:
+[[2235   57   12    0    4]
+ [   0 2230   38   36    0]
+ [   0    0  364    0    0]
+ [   0    0    0  191    0]
+ [   0    0    0    0   93]]
+2025-04-06 17:16:20,446 - src.app.main - INFO - Model saved successfully to C:\Users\hp1\Desktop\MLOP\WeatherWise-Classifier-MLOP\models\neural_network_model.h5
+2025-04-06 17:16:20,446 - src.app.main - ERROR - Unexpected error: name 'raw_metrics' is not defined
+Traceback (most recent call last):
+  File "C:\Users\hp1\Desktop\MLOP\WeatherWise-Classifier-MLOP\src\app\main.py", line 325, in retrain_model
+    accuracy=raw_metrics["accuracy"],
+             ^^^^^^^^^^^
+NameError: name 'raw_metrics' is not defined
+2025-04-06 17:27:48,461 - src.app.main - INFO - Starting model retraining process
+2025-04-06 17:27:53,712 - root - INFO - Applying Random Over-Sampling (imbalance ratio: 0.04)
+2025-04-06 17:27:53,721 - src.app.main - INFO - 
+=== DATA VALIDATION ===
+2025-04-06 17:27:53,722 - src.app.main - INFO - X_train shape: (46150, 8), dtype: float32
+2025-04-06 17:27:53,722 - src.app.main - INFO - y_train shape: (46150,), dtype: int32
+2025-04-06 17:27:53,724 - src.app.main - INFO - Unique y_train values: [0 1 2 3 4]
+2025-04-06 17:27:53,725 - src.app.main - INFO - Number of classes: 5
+2025-04-06 17:27:53,726 - src.app.main - INFO - X_train min/max: -3.0706639289855957, 5.0
+2025-04-06 17:27:53,726 - src.app.main - INFO - y_train min/max: 0, 4
+2025-04-06 17:31:18,957 - root - INFO - 
+Model Evaluation:
+2025-04-06 17:31:18,957 - root - INFO - Accuracy: 0.9663
+2025-04-06 17:31:18,958 - root - INFO - Precision: 0.928
+2025-04-06 17:31:18,958 - root - INFO - Recall: 0.9846
+2025-04-06 17:31:18,958 - root - INFO - F1 Score: 0.9532
+2025-04-06 17:31:18,959 - root - INFO - Confusion Matrix:
+[[2231   65   12    0    0]
+ [  11 2204   42   47    0]
+ [   0    0  364    0    0]
+ [   0    0    0  191    0]
+ [   0    0    0    0   93]]
+2025-04-06 17:31:19,054 - src.app.main - INFO - Model saved successfully to C:\Users\hp1\Desktop\MLOP\WeatherWise-Classifier-MLOP\models\neural_network_model.h5
+2025-04-06 17:31:19,060 - src.app.main - ERROR - Unexpected error: 1 validation error for MetricDetail
+confusion_matrix
+  value is not a valid dict (type=type_error.dict)
+Traceback (most recent call last):
+  File "C:\Users\hp1\Desktop\MLOP\WeatherWise-Classifier-MLOP\src\app\main.py", line 430, in retrain_model
+    metrics=MetricDetail(
+            ^^^^^^^^^^^^^
+  File "pydantic\main.py", line 341, in pydantic.main.BaseModel.__init__
+pydantic.error_wrappers.ValidationError: 1 validation error for MetricDetail
+confusion_matrix
+  value is not a valid dict (type=type_error.dict)
+2025-04-06 17:51:43,726 - src.app.main - INFO - Root endpoint accessed
+2025-04-06 17:58:07,359 - src.app.main - INFO - Starting training data upload
+2025-04-06 17:58:11,693 - src.app.main - INFO - Successfully added 1461 records, 0 invalid records
+2025-04-06 17:58:21,068 - src.app.main - INFO - Starting single prediction
+2025-04-06 17:58:24,617 - src.app.main - INFO - Successfully completed single prediction
+2025-04-06 17:59:07,144 - src.app.main - INFO - Starting bulk prediction
+2025-04-06 17:59:08,351 - src.app.main - INFO - Successfully completed bulk prediction for 1022 records
+2025-04-06 17:59:24,475 - src.app.main - INFO - Starting model retraining process
+2025-04-06 17:59:28,570 - root - INFO - Applying Random Over-Sampling (imbalance ratio: 0.04)
+2025-04-06 17:59:28,584 - src.app.main - INFO - 
+=== DATA VALIDATION ===
+2025-04-06 17:59:28,584 - src.app.main - INFO - X_train shape: (48715, 8), dtype: float32
+2025-04-06 17:59:28,584 - src.app.main - INFO - y_train shape: (48715,), dtype: int32
+2025-04-06 17:59:28,586 - src.app.main - INFO - Unique y_train values: [0 1 2 3 4]
+2025-04-06 17:59:28,587 - src.app.main - INFO - Number of classes: 5
+2025-04-06 17:59:28,589 - src.app.main - INFO - X_train min/max: -3.074867010116577, 5.0
+2025-04-06 17:59:28,589 - src.app.main - INFO - y_train min/max: 0, 4
+2025-04-06 18:03:16,249 - root - INFO - 
+Model Evaluation:
+2025-04-06 18:03:16,250 - root - INFO - Accuracy: Ellipsis
+2025-04-06 18:03:16,250 - root - INFO - Precision: Ellipsis
+2025-04-06 18:03:16,251 - src.app.main - ERROR - Unexpected error: 'recall'
+Traceback (most recent call last):
+  File "C:\Users\hp1\Desktop\MLOP\WeatherWise-Classifier-MLOP\src\app\main.py", line 428, in retrain_model
+    metrics = evaluate_model(model, X_test, y_test)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\hp1\Desktop\MLOP\WeatherWise-Classifier-MLOP\src\model.py", line 103, in evaluate_model
+    logging.info(f"Recall: {metrics['recall']}")
+                            ~~~~~~~^^^^^^^^^^
+KeyError: 'recall'
+2025-04-06 18:10:18,979 - src.app.main - INFO - Starting model retraining process
+2025-04-06 18:10:23,121 - root - INFO - Applying Random Over-Sampling (imbalance ratio: 0.04)
+2025-04-06 18:10:23,144 - src.app.main - INFO - 
+=== DATA VALIDATION ===
+2025-04-06 18:10:23,176 - src.app.main - INFO - X_train shape: (48715, 8), dtype: float32
+2025-04-06 18:10:23,182 - src.app.main - INFO - y_train shape: (48715,), dtype: int32
+2025-04-06 18:10:23,189 - src.app.main - INFO - Unique y_train values: [0 1 2 3 4]
+2025-04-06 18:10:23,194 - src.app.main - INFO - Number of classes: 5
+2025-04-06 18:10:23,195 - src.app.main - INFO - X_train min/max: -3.074867010116577, 5.0
+2025-04-06 18:10:23,196 - src.app.main - INFO - y_train min/max: 0, 4
+2025-04-06 18:14:10,531 - root - INFO - 
+Model Evaluation:
+2025-04-06 18:14:10,531 - root - INFO - Accuracy: 0.9728
+2025-04-06 18:14:10,532 - root - INFO - Precision: 0.9359
+2025-04-06 18:14:10,532 - root - INFO - Recall: 0.9876
+2025-04-06 18:14:10,532 - root - INFO - F1 Score: 0.9592
+2025-04-06 18:14:10,532 - root - INFO - Confusion Matrix:
+[[2380   51    5    0    0]
+ [   4 2337   48   43    0]
+ [   0    0  384    0    0]
+ [   0    0    0  201    0]
+ [   0    0    0    0   99]]
+2025-04-06 18:14:10,576 - src.app.main - INFO - Model saved successfully to C:\Users\hp1\Desktop\MLOP\WeatherWise-Classifier-MLOP\models\neural_network_model.h5
+2025-04-06 18:14:10,577 - src.app.main - ERROR - Unexpected error: name 'VALID_WEATHER_TYPES' is not defined
+Traceback (most recent call last):
+  File "C:\Users\hp1\Desktop\MLOP\WeatherWise-Classifier-MLOP\src\app\main.py", line 446, in retrain_model
+    labels=list(VALID_WEATHER_TYPES.keys())  # ['rain', 'sun', 'fog', 'drizzle', 'snow']
+                ^^^^^^^^^^^^^^^^^^^
+NameError: name 'VALID_WEATHER_TYPES' is not defined
+2025-04-06 18:17:51,008 - src.app.main - INFO - Starting model retraining process
+2025-04-06 18:17:55,616 - root - INFO - Applying Random Over-Sampling (imbalance ratio: 0.04)
+2025-04-06 18:17:55,625 - src.app.main - INFO - 
+=== DATA VALIDATION ===
+2025-04-06 18:17:55,626 - src.app.main - INFO - X_train shape: (48715, 8), dtype: float32
+2025-04-06 18:17:55,626 - src.app.main - INFO - y_train shape: (48715,), dtype: int32
+2025-04-06 18:17:55,627 - src.app.main - INFO - Unique y_train values: [0 1 2 3 4]
+2025-04-06 18:17:55,629 - src.app.main - INFO - Number of classes: 5
+2025-04-06 18:17:55,630 - src.app.main - INFO - X_train min/max: -3.074867010116577, 5.0
+2025-04-06 18:17:55,631 - src.app.main - INFO - y_train min/max: 0, 4
+2025-04-06 18:21:38,018 - root - INFO - 
+Model Evaluation:
+2025-04-06 18:21:38,018 - root - INFO - Accuracy: 0.9687
+2025-04-06 18:21:38,018 - root - INFO - Precision: 0.9344
+2025-04-06 18:21:38,018 - root - INFO - Recall: 0.9857
+2025-04-06 18:21:38,019 - root - INFO - F1 Score: 0.9576
+2025-04-06 18:21:38,019 - root - INFO - Confusion Matrix:
+[[2351   70   15    0    0]
+ [   0 2343   55   34    0]
+ [   0    0  384    0    0]
+ [   0    0    0  201    0]
+ [   0    0    0    0   99]]
+2025-04-06 18:21:38,085 - src.app.main - INFO - Model saved successfully to C:\Users\hp1\Desktop\MLOP\WeatherWise-Classifier-MLOP\models\neural_network_model.h5
+2025-04-06 18:21:38,088 - src.app.main - ERROR - Unexpected error: 4 validation errors for ConfusionMatrix
+true_negative
+  field required (type=value_error.missing)
+false_positive
+  field required (type=value_error.missing)
+false_negative
+  field required (type=value_error.missing)
+true_positive
+  field required (type=value_error.missing)
+Traceback (most recent call last):
+  File "C:\Users\hp1\Desktop\MLOP\WeatherWise-Classifier-MLOP\src\app\main.py", line 445, in retrain_model
+    confusion_matrix=ConfusionMatrix(
+                     ^^^^^^^^^^^^^^^^
+  File "pydantic\main.py", line 341, in pydantic.main.BaseModel.__init__
+pydantic.error_wrappers.ValidationError: 4 validation errors for ConfusionMatrix
+true_negative
+  field required (type=value_error.missing)
+false_positive
+  field required (type=value_error.missing)
+false_negative
+  field required (type=value_error.missing)
+true_positive
+  field required (type=value_error.missing)
+2025-04-06 18:26:16,484 - src.app.main - INFO - Starting model retraining process
+2025-04-06 18:26:20,837 - root - INFO - Applying Random Over-Sampling (imbalance ratio: 0.04)
+2025-04-06 18:26:20,851 - src.app.main - INFO - 
+=== DATA VALIDATION ===
+2025-04-06 18:26:20,851 - src.app.main - INFO - X_train shape: (48715, 8), dtype: float32
+2025-04-06 18:26:20,851 - src.app.main - INFO - y_train shape: (48715,), dtype: int32
+2025-04-06 18:26:20,853 - src.app.main - INFO - Unique y_train values: [0 1 2 3 4]
+2025-04-06 18:26:20,855 - src.app.main - INFO - Number of classes: 5
+2025-04-06 18:26:20,856 - src.app.main - INFO - X_train min/max: -3.074867010116577, 5.0
+2025-04-06 18:26:20,856 - src.app.main - INFO - y_train min/max: 0, 4
+2025-04-06 18:30:06,141 - root - INFO - 
+Model Evaluation:
+2025-04-06 18:30:06,142 - root - INFO - Accuracy: 0.9679
+2025-04-06 18:30:06,142 - root - INFO - Precision: 0.9327
+2025-04-06 18:30:06,142 - root - INFO - Recall: 0.9854
+2025-04-06 18:30:06,142 - root - INFO - F1 Score: 0.9569
+2025-04-06 18:30:06,142 - root - INFO - Confusion Matrix:
+[[2348   80    5    0    3]
+ [   5 2342   51   34    0]
+ [   0    0  384    0    0]
+ [   0    0    0  201    0]
+ [   0    0    0    0   99]]
+2025-04-06 18:30:06,234 - src.app.main - INFO - Model saved successfully to C:\Users\hp1\Desktop\MLOP\WeatherWise-Classifier-MLOP\models\neural_network_model.h5
+2025-04-06 18:30:06,236 - src.app.main - ERROR - Unexpected error: 4 validation errors for ConfusionMatrix
+true_negative
+  field required (type=value_error.missing)
+false_positive
+  field required (type=value_error.missing)
+false_negative
+  field required (type=value_error.missing)
+true_positive
+  field required (type=value_error.missing)
+Traceback (most recent call last):
+  File "C:\Users\hp1\Desktop\MLOP\WeatherWise-Classifier-MLOP\src\app\main.py", line 446, in retrain_model
+    confusion_matrix=ConfusionMatrix(
+                     ^^^^^^^^^^^^^^^^
+  File "pydantic\main.py", line 341, in pydantic.main.BaseModel.__init__
+pydantic.error_wrappers.ValidationError: 4 validation errors for ConfusionMatrix
+true_negative
+  field required (type=value_error.missing)
+false_positive
+  field required (type=value_error.missing)
+false_negative
+  field required (type=value_error.missing)
+true_positive
+  field required (type=value_error.missing)
+2025-04-06 18:33:55,952 - src.app.main - INFO - Starting model retraining process
+2025-04-06 18:34:00,419 - root - INFO - Applying Random Over-Sampling (imbalance ratio: 0.04)
+2025-04-06 18:34:00,440 - src.app.main - INFO - 
+=== DATA VALIDATION ===
+2025-04-06 18:34:00,441 - src.app.main - INFO - X_train shape: (48715, 8), dtype: float32
+2025-04-06 18:34:00,441 - src.app.main - INFO - y_train shape: (48715,), dtype: int32
+2025-04-06 18:34:00,444 - src.app.main - INFO - Unique y_train values: [0 1 2 3 4]
+2025-04-06 18:34:00,445 - src.app.main - INFO - Number of classes: 5
+2025-04-06 18:34:00,447 - src.app.main - INFO - X_train min/max: -3.074867010116577, 5.0
+2025-04-06 18:34:00,447 - src.app.main - INFO - y_train min/max: 0, 4
+2025-04-06 18:37:43,763 - root - INFO - 
+Model Evaluation:
+2025-04-06 18:37:43,763 - root - INFO - Accuracy: 0.976
+2025-04-06 18:37:43,763 - root - INFO - Precision: 0.958
+2025-04-06 18:37:43,763 - root - INFO - Recall: 0.9891
+2025-04-06 18:37:43,764 - root - INFO - F1 Score: 0.9725
+2025-04-06 18:37:43,764 - root - INFO - Confusion Matrix:
+[[2361   68    7    0    0]
+ [   0 2374   44   14    0]
+ [   0    0  384    0    0]
+ [   0    0    0  201    0]
+ [   0    0    0    0   99]]
+2025-04-06 18:37:43,822 - src.app.main - INFO - Model saved successfully to C:\Users\hp1\Desktop\MLOP\WeatherWise-Classifier-MLOP\models\neural_network_model.h5
+2025-04-06 18:38:41,765 - src.app.main - INFO - Starting model save operation
+2025-04-06 18:38:41,767 - src.app.main - ERROR - Missing model_id in save request
+2025-04-06 18:38:41,767 - src.app.main - ERROR - HTTP Exception during model save: Missing model_id
+2025-04-06 18:39:28,667 - src.app.main - INFO - Starting model save operation
+2025-04-06 18:39:28,668 - src.app.main - ERROR - Missing model_id in save request
+2025-04-06 18:39:28,668 - src.app.main - ERROR - HTTP Exception during model save: Missing model_id
+2025-04-06 18:50:17,758 - src.app.main - INFO - Starting model retraining process
+2025-04-06 18:50:22,166 - root - INFO - Applying Random Over-Sampling (imbalance ratio: 0.04)
+2025-04-06 18:50:22,181 - src.app.main - INFO - 
+=== DATA VALIDATION ===
+2025-04-06 18:50:22,182 - src.app.main - INFO - X_train shape: (48715, 8), dtype: float32
+2025-04-06 18:50:22,182 - src.app.main - INFO - y_train shape: (48715,), dtype: int32
+2025-04-06 18:50:22,186 - src.app.main - INFO - Unique y_train values: [0 1 2 3 4]
+2025-04-06 18:50:22,188 - src.app.main - INFO - Number of classes: 5
+2025-04-06 18:50:22,189 - src.app.main - INFO - X_train min/max: -3.074867010116577, 5.0
+2025-04-06 18:50:22,189 - src.app.main - INFO - y_train min/max: 0, 4
+2025-04-06 18:55:21,983 - root - INFO - 
+Model Evaluation:
+2025-04-06 18:55:21,985 - root - INFO - Accuracy: 0.9676
+2025-04-06 18:55:21,985 - root - INFO - Precision: 0.9293
+2025-04-06 18:55:21,986 - root - INFO - Recall: 0.9852
+2025-04-06 18:55:21,986 - root - INFO - F1 Score: 0.9541
+2025-04-06 18:55:21,987 - root - INFO - Confusion Matrix:
+[[2347   79   10    0    0]
+ [   0 2341   37   54    0]
+ [   0    0  384    0    0]
+ [   0    0    0  201    0]
+ [   0    0    0    0   99]]
+2025-04-06 18:55:22,159 - src.app.main - INFO - Model saved successfully to C:\Users\hp1\Desktop\MLOP\WeatherWise-Classifier-MLOP\models\neural_network_model.h5
+2025-04-06 18:56:00,508 - src.app.main - INFO - Starting model retraining process
+2025-04-06 18:56:05,336 - root - INFO - Applying Random Over-Sampling (imbalance ratio: 0.04)
+2025-04-06 18:56:05,348 - src.app.main - INFO - 
+=== DATA VALIDATION ===
+2025-04-06 18:56:05,349 - src.app.main - INFO - X_train shape: (48715, 8), dtype: float32
+2025-04-06 18:56:05,349 - src.app.main - INFO - y_train shape: (48715,), dtype: int32
+2025-04-06 18:56:05,350 - src.app.main - INFO - Unique y_train values: [0 1 2 3 4]
+2025-04-06 18:56:05,351 - src.app.main - INFO - Number of classes: 5
+2025-04-06 18:56:05,352 - src.app.main - INFO - X_train min/max: -3.074867010116577, 5.0
+2025-04-06 18:56:05,354 - src.app.main - INFO - y_train min/max: 0, 4
+2025-04-06 19:01:00,765 - root - INFO - 
+Model Evaluation:
+2025-04-06 19:01:00,768 - root - INFO - Accuracy: 0.9678
+2025-04-06 19:01:00,768 - root - INFO - Precision: 0.9326
+2025-04-06 19:01:00,769 - root - INFO - Recall: 0.9853
+2025-04-06 19:01:00,769 - root - INFO - F1 Score: 0.9564
+2025-04-06 19:01:00,771 - root - INFO - Confusion Matrix:
+[[2343   77   16    0    0]
+ [   0 2346   46   40    0]
+ [   0    0  384    0    0]
+ [   0    0    0  201    0]
+ [   0    0    0    0   99]]
+2025-04-06 19:01:00,846 - src.app.main - INFO - Model saved successfully to C:\Users\hp1\Desktop\MLOP\WeatherWise-Classifier-MLOP\models\neural_network_model.h5
+2025-04-06 19:01:40,964 - src.app.main - INFO - Starting model retraining process
+2025-04-06 19:01:46,480 - root - INFO - Applying Random Over-Sampling (imbalance ratio: 0.04)
+2025-04-06 19:01:46,497 - src.app.main - INFO - 
+=== DATA VALIDATION ===
+2025-04-06 19:01:46,498 - src.app.main - INFO - X_train shape: (48715, 8), dtype: float32
+2025-04-06 19:01:46,498 - src.app.main - INFO - y_train shape: (48715,), dtype: int32
+2025-04-06 19:01:46,500 - src.app.main - INFO - Unique y_train values: [0 1 2 3 4]
+2025-04-06 19:01:46,502 - src.app.main - INFO - Number of classes: 5
+2025-04-06 19:01:46,505 - src.app.main - INFO - X_train min/max: -3.074867010116577, 5.0
+2025-04-06 19:01:46,507 - src.app.main - INFO - y_train min/max: 0, 4
+2025-04-06 19:06:02,394 - root - INFO - 
+Model Evaluation:
+2025-04-06 19:06:02,395 - root - INFO - Accuracy: 0.9741
+2025-04-06 19:06:02,395 - root - INFO - Precision: 0.9556
+2025-04-06 19:06:02,395 - root - INFO - Recall: 0.9882
+2025-04-06 19:06:02,395 - root - INFO - F1 Score: 0.9708
+2025-04-06 19:06:02,396 - root - INFO - Confusion Matrix:
+[[2359   67   10    0    0]
+ [   9 2365   43   15    0]
+ [   0    0  384    0    0]
+ [   0    0    0  201    0]
+ [   0    0    0    0   99]]
+2025-04-06 19:06:02,445 - src.app.main - INFO - Model saved successfully to C:\Users\hp1\Desktop\MLOP\WeatherWise-Classifier-MLOP\models\neural_network_model.h5
+2025-04-06 19:12:30,344 - src.app.main - INFO - Starting model save operation
+2025-04-06 19:12:30,345 - src.app.main - ERROR - Model not found in cache: c3a4637b-516b-4a84-b4fa-fd752d6f6103
+2025-04-06 19:12:30,346 - src.app.main - ERROR - HTTP Exception during model save: Model not found or expired
+2025-04-06 19:27:00,523 - src.app.main - INFO - Starting model save operation
+2025-04-06 19:27:00,525 - src.app.main - ERROR - Model not found in cache: c3a4637b-516b-4a84-b4fa-fd752d6f6103
+2025-04-06 19:27:00,525 - src.app.main - ERROR - HTTP Exception during model save: Model not found or expired
+2025-04-06 19:29:55,379 - src.app.main - INFO - Root endpoint accessed
+2025-04-06 19:30:45,223 - src.app.main - INFO - Starting training data upload
+2025-04-06 19:30:50,561 - src.app.main - INFO - Successfully added 1461 records, 0 invalid records
+2025-04-06 19:31:00,301 - src.app.main - INFO - Starting single prediction
+2025-04-06 19:31:02,575 - src.app.main - INFO - Successfully completed single prediction
+2025-04-06 19:31:28,649 - src.app.main - INFO - Starting bulk prediction
+2025-04-06 19:31:29,816 - src.app.main - INFO - Successfully completed bulk prediction for 1022 records
+2025-04-06 19:31:38,377 - src.app.main - INFO - Starting model retraining process
+2025-04-06 19:31:38,378 - src.app.main - INFO - Generated model ID: 61331cd2-04d9-4127-bf39-be11ce7649f3
+2025-04-06 19:31:45,318 - root - INFO - Applying Random Over-Sampling (imbalance ratio: 0.04)
+2025-04-06 19:31:45,424 - src.app.main - INFO - 
+=== DATA VALIDATION ===
+2025-04-06 19:31:45,424 - src.app.main - INFO - X_train shape: (51280, 8), dtype: float32
+2025-04-06 19:31:45,449 - src.app.main - INFO - y_train shape: (51280,), dtype: int32
+2025-04-06 19:31:45,455 - src.app.main - INFO - Unique y_train values: [0 1 2 3 4]
+2025-04-06 19:31:45,456 - src.app.main - INFO - Number of classes: 5
+2025-04-06 19:31:45,476 - src.app.main - INFO - X_train min/max: -3.07350492477417, 5.0
+2025-04-06 19:31:45,477 - src.app.main - INFO - y_train min/max: 0, 4
+2025-04-06 19:36:49,024 - root - INFO - 
+Model Evaluation:
+2025-04-06 19:36:49,071 - root - INFO - Accuracy: 0.9685
+2025-04-06 19:36:49,073 - root - INFO - Precision: 0.9316
+2025-04-06 19:36:49,073 - root - INFO - Recall: 0.9856
+2025-04-06 19:36:49,074 - root - INFO - F1 Score: 0.9556
+2025-04-06 19:36:49,082 - root - INFO - Confusion Matrix:
+[[2475   77   12    0    0]
+ [   6 2465   33   56    0]
+ [   0    0  404    0    0]
+ [   0    0    0  212    0]
+ [   0    0    0    0  104]]
+2025-04-06 19:36:49,484 - src.app.main - INFO - Model saved successfully to C:\Users\hp1\Desktop\MLOP\WeatherWise-Classifier-MLOP\models\neural_network_model.h5
+2025-04-06 19:40:26,007 - src.app.main - INFO - Starting model save operation
+2025-04-06 19:40:26,024 - src.app.main - ERROR - Model not found in cache: 2e431229-a7e5-4c1d-9ad6-992537dbc038
+2025-04-06 19:40:26,027 - src.app.main - ERROR - HTTP Exception during model save: Model not found or expired
+2025-04-06 19:40:54,713 - src.app.main - INFO - Starting model save operation
+2025-04-06 19:40:54,717 - src.app.main - ERROR - Model not found in cache: 2e431229-a7e5-4c1d-9ad6-992537dbc038
+2025-04-06 19:40:54,717 - src.app.main - ERROR - HTTP Exception during model save: Model not found or expired
+2025-04-06 20:06:28,107 - src.app.main - INFO - Root endpoint accessed
+2025-04-06 20:06:49,193 - src.app.main - INFO - Starting model retraining process
+2025-04-06 20:06:49,194 - src.app.main - INFO - Generated model ID: eed5a4fd-6dd5-4627-a7c0-351fb02b0c9c
+2025-04-06 20:06:49,194 - src.app.main - ERROR - Unexpected error: cannot access local variable 'model' where it is not associated with a value
+Traceback (most recent call last):
+  File "C:\Users\hp1\Desktop\MLOP\WeatherWise-Classifier-MLOP\src\app\main.py", line 258, in retrain_model
+    'model': model,
+             ^^^^^
+UnboundLocalError: cannot access local variable 'model' where it is not associated with a value
+2025-04-06 20:06:51,554 - src.app.main - INFO - Starting model retraining process
+2025-04-06 20:06:51,554 - src.app.main - INFO - Generated model ID: a016ca63-05f2-43a5-b028-dfab059e5d78
+2025-04-06 20:06:51,554 - src.app.main - ERROR - Unexpected error: cannot access local variable 'model' where it is not associated with a value
+Traceback (most recent call last):
+  File "C:\Users\hp1\Desktop\MLOP\WeatherWise-Classifier-MLOP\src\app\main.py", line 258, in retrain_model
+    'model': model,
+             ^^^^^
+UnboundLocalError: cannot access local variable 'model' where it is not associated with a value
+2025-04-06 20:07:19,989 - src.app.main - INFO - Starting training data upload
+2025-04-06 20:07:23,962 - src.app.main - INFO - Successfully added 1461 records, 0 invalid records
+2025-04-06 20:07:33,480 - src.app.main - INFO - Starting single prediction
+2025-04-06 20:07:34,664 - src.app.main - INFO - Successfully completed single prediction
+2025-04-06 20:07:37,931 - src.app.main - INFO - Starting model retraining process
+2025-04-06 20:07:37,932 - src.app.main - INFO - Generated model ID: 4edfbdee-fedc-47a8-95be-e1168d1e38d6
+2025-04-06 20:07:37,932 - src.app.main - ERROR - Unexpected error: cannot access local variable 'model' where it is not associated with a value
+Traceback (most recent call last):
+  File "C:\Users\hp1\Desktop\MLOP\WeatherWise-Classifier-MLOP\src\app\main.py", line 258, in retrain_model
+    'model': model,
+             ^^^^^
+UnboundLocalError: cannot access local variable 'model' where it is not associated with a value
+2025-04-06 20:08:00,681 - src.app.main - INFO - Starting bulk prediction
+2025-04-06 20:08:01,427 - src.app.main - INFO - Successfully completed bulk prediction for 1022 records
+2025-04-06 20:08:09,870 - src.app.main - INFO - Starting model retraining process
+2025-04-06 20:08:09,870 - src.app.main - INFO - Generated model ID: 0f5acd28-a580-47b1-aa93-babcb8238c7e
+2025-04-06 20:08:09,871 - src.app.main - ERROR - Unexpected error: cannot access local variable 'model' where it is not associated with a value
+Traceback (most recent call last):
+  File "C:\Users\hp1\Desktop\MLOP\WeatherWise-Classifier-MLOP\src\app\main.py", line 258, in retrain_model
+    'model': model,
+             ^^^^^
+UnboundLocalError: cannot access local variable 'model' where it is not associated with a value
+2025-04-06 20:14:46,375 - src.app.main - INFO - Starting model retraining process
+2025-04-06 20:14:50,405 - root - INFO - Applying Random Over-Sampling (imbalance ratio: 0.04)
+2025-04-06 20:14:50,418 - src.app.main - INFO - 
+=== DATA VALIDATION ===
+2025-04-06 20:14:50,419 - src.app.main - INFO - X_train shape: (53845, 8), dtype: float32
+2025-04-06 20:14:50,419 - src.app.main - INFO - y_train shape: (53845,), dtype: int32
+2025-04-06 20:14:50,421 - src.app.main - INFO - Unique y_train values: [0 1 2 3 4]
+2025-04-06 20:14:50,424 - src.app.main - INFO - Number of classes: 5
+2025-04-06 20:14:50,424 - src.app.main - INFO - X_train min/max: -3.0688929557800293, 5.0
+2025-04-06 20:14:50,425 - src.app.main - INFO - y_train min/max: 0, 4
+2025-04-06 20:16:57,220 - src.app.main - INFO - Generated model ID: 9821ff36-098c-4096-bc85-646b60d66cc6
+2025-04-06 20:16:57,682 - root - INFO - 
+Model Evaluation:
+2025-04-06 20:16:57,682 - root - INFO - Accuracy: 0.9454
+2025-04-06 20:16:57,682 - root - INFO - Precision: 0.8752
+2025-04-06 20:16:57,683 - root - INFO - Recall: 0.9711
+2025-04-06 20:16:57,683 - root - INFO - F1 Score: 0.9167
+2025-04-06 20:16:57,683 - root - INFO - Confusion Matrix:
+[[2548  108   23    0   13]
+ [   6 2507  109   66    0]
+ [   0   10  414    0    0]
+ [   0    0    0  223    0]
+ [   0    0    0    0  109]]
+2025-04-06 20:16:57,723 - src.app.main - INFO - Model saved successfully to models/model_9821ff36-098c-4096-bc85-646b60d66cc6.h5
+2025-04-06 20:17:44,180 - src.app.main - INFO - Starting model save operation
+2025-04-06 20:17:44,231 - src.app.main - INFO - Successfully saved model to models/model_9821ff36-098c-4096-bc85-646b60d66cc6.h5

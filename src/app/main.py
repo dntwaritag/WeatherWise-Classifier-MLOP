@@ -2,13 +2,20 @@ from fastapi import FastAPI, UploadFile, File, HTTPException, Depends
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 import pandas as pd
+from datetime import datetime, timedelta
 import uvicorn
 import os
 import pickle
+from fastapi.responses import FileResponse
 import sys
 from sqlalchemy.orm import Session
 from pathlib import Path
 import uuid
+from typing import List
+from pydantic import BaseModel
+# start
+#from main import ConfusionMatrix, MetricDetail
+# End
 from typing import Dict, List, Optional
 from datetime import datetime, timedelta
 import io
@@ -29,6 +36,7 @@ logging.basicConfig(
     ]
 )
 logger = logging.getLogger(__name__)
+logging.getLogger("uvicorn.access").addFilter(lambda record: "/favicon.ico" not in record.getMessage())
 
 # Local imports
 from .database import get_db
@@ -36,6 +44,7 @@ from .models import WeatherData
 from src.preprocessing import preprocess_data, load_prediction_data, fetch_training_data
 from src.model import save_model, evaluate_model
 from src.prediction import predict
+from src.preprocessing import VALID_WEATHER_TYPES
 
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..")))
 
@@ -67,10 +76,8 @@ os.makedirs(MODEL_PATH.parent, exist_ok=True)
 trained_models_cache = {}
 
 class ConfusionMatrix(BaseModel):
-    true_negative: int
-    false_positive: int
-    false_negative: int
-    true_positive: int
+    matrix: List[List[int]]  # 2D array for multi-class
+    labels: List[str]  # Class names
 
 class MetricDetail(BaseModel):
     accuracy: float
@@ -99,12 +106,15 @@ class RetrainResponse(BaseModel):
 class SaveResponse(BaseModel):
     success: bool
     message: str
+    model_path: str
 
 class BulkUploadResponse(BaseModel):
     success: bool
     message: str
     records_added: int
     invalid_records: int
+class SaveRequest(BaseModel):
+    model_id: str
 
 # Helper Functions
 def cleanup_expired_models():
@@ -120,7 +130,21 @@ def cleanup_expired_models():
     except Exception as e:
         logger.error(f"Error cleaning up expired models: {str(e)}", exc_info=True)
 
+def cleanup_old_models():
+    now = datetime.now()
+    for model_id, data in list(trained_models_cache.items()):
+        if data['expires'] < now:
+            del trained_models_cache[model_id]
+            try:
+                os.remove(f"models/model_{model_id}.h5")
+            except FileNotFoundError:
+                pass
+
 # API Endpoints
+@app.get('/favicon.ico', include_in_schema=False)
+async def favicon():
+    return FileResponse('path/to/favicon.ico')
+
 @app.post("/upload-training-data/", response_model=BulkUploadResponse)
 async def upload_training_data(
     file: UploadFile = File(...),
@@ -297,10 +321,20 @@ async def retrain_model(db: Session = Depends(get_db)):
                 X_train, y_train,
                 validation_data=(X_test, y_test),
                 epochs=50,
-                batch_size=32,  # Reduced from 64 to prevent memory issues
+                batch_size=32,
                 callbacks=[early_stopping],
                 verbose=1
             )
+
+            # Generate model_id AFTER successful training
+            model_id = str(uuid.uuid4())
+            logger.info(f"Generated model ID: {model_id}")
+            
+            # Store in cache AFTER training completes
+            trained_models_cache[model_id] = {
+                'model': model,
+                'expires': datetime.now() + timedelta(hours=24)
+            }
 
         except Exception as e:
             logger.error(f"Model training failed: {str(e)}", exc_info=True)
@@ -311,15 +345,25 @@ async def retrain_model(db: Session = Depends(get_db)):
         
         # Save model with checks
         try:
-            model.save(MODEL_PATH)
-            logger.info(f"Model saved successfully to {MODEL_PATH}")
+            model_path = f"models/model_{model_id}.h5"
+            model.save(model_path)
+            logger.info(f"Model saved successfully to {model_path}")
         except Exception as e:
             logger.error(f"Failed to save model: {str(e)}")
             raise HTTPException(500, f"Model saving failed: {str(e)}")
         
         return RetrainResponse(
-            metrics=MetricDetail(**metrics),
-            model_id=str(uuid.uuid4()),
+            metrics=MetricDetail(
+                accuracy=metrics["accuracy"],
+                precision=metrics["precision"],
+                recall=metrics["recall"],
+                f1=metrics["f1"],
+                confusion_matrix=ConfusionMatrix(
+                    matrix=metrics["confusion_matrix"],
+                    labels=list(VALID_WEATHER_TYPES.keys())
+                )
+            ),
+            model_id=model_id,  # Use the same model_id we generated
             message="Model retrained successfully",
             training_samples=len(X_train),
             test_samples=len(X_test)
@@ -330,34 +374,39 @@ async def retrain_model(db: Session = Depends(get_db)):
     except Exception as e:
         logger.error(f"Unexpected error: {str(e)}", exc_info=True)
         raise HTTPException(500, f"Retraining failed: {str(e)}")
+    
 
 @app.post("/save-model/", response_model=SaveResponse)
-async def save_model_endpoint(
-    model_data: dict,
-    db: Session = Depends(get_db)
-):
+async def save_model_endpoint(request: SaveRequest, db: Session = Depends(get_db)):
     """Save a trained model from cache to persistent storage"""
     logger.info("Starting model save operation")
+    
     try:
-        model_id = model_data.get('model_id')
+        model_id = request.model_id
         if not model_id:
-            logger.error("Missing model_id in save request")
             raise HTTPException(400, "Missing model_id")
-        
+
+        # Check cache
         model_data = trained_models_cache.get(model_id)
         if not model_data:
             logger.error(f"Model not found in cache: {model_id}")
             raise HTTPException(404, "Model not found or expired")
+
+        # Get model from cache
+        model = model_data['model']
         
-        model_data['model'].save(MODEL_PATH)
-        logger.info(f"Successfully saved model to {MODEL_PATH}")
+        # Save to persistent storage
+        model_path = f"models/model_{model_id}.h5"
+        model.save(model_path)
         
+        # Remove from cache
         del trained_models_cache[model_id]
-        logger.info(f"Removed model {model_id} from cache")
         
+        logger.info(f"Successfully saved model to {model_path}")
         return SaveResponse(
             success=True,
-            message="Model saved successfully"
+            message="Model saved successfully",
+            model_path=model_path
         )
         
     except HTTPException as he:
