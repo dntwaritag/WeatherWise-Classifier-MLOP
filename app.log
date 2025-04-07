@@ -987,3 +987,35 @@ Model Evaluation:
 2025-04-07 15:19:46,380 - src.app.main - INFO - Model saved successfully to models/model_73c56ed1-2ecb-4302-ab26-5fcd04b79c19.h5
 2025-04-07 15:20:49,792 - src.app.main - INFO - Starting model save operation
 2025-04-07 15:20:49,844 - src.app.main - INFO - Successfully saved model to models/model_73c56ed1-2ecb-4302-ab26-5fcd04b79c19.h5
+2025-04-07 15:53:17,405 - src.app.main - INFO - Starting training data upload
+2025-04-07 15:53:21,073 - src.app.main - INFO - Successfully added 1461 records, 0 invalid records
+2025-04-07 15:53:32,523 - src.app.main - INFO - Starting model retraining process
+2025-04-07 15:53:36,905 - root - INFO - Applying Random Over-Sampling (imbalance ratio: 0.04)
+2025-04-07 15:53:36,963 - src.app.main - INFO - 
+=== DATA VALIDATION ===
+2025-04-07 15:53:36,964 - src.app.main - INFO - X_train shape: (58970, 8), dtype: float32
+2025-04-07 15:53:36,965 - src.app.main - INFO - y_train shape: (58970,), dtype: int32
+2025-04-07 15:53:36,966 - src.app.main - INFO - Unique y_train values: [0 1 2 3 4]
+2025-04-07 15:53:36,968 - src.app.main - INFO - Number of classes: 5
+2025-04-07 15:53:36,978 - src.app.main - INFO - X_train min/max: -3.0644679069519043, 5.0
+2025-04-07 15:53:36,984 - src.app.main - INFO - y_train min/max: 0, 4
+2025-04-07 15:53:37,657 - tensorflow - WARNING - From C:\Users\hp1\Desktop\MLOP\WeatherWise-Classifier-MLOP\venv\Lib\site-packages\keras\src\backend.py:277: The name tf.reset_default_graph is deprecated. Please use tf.compat.v1.reset_default_graph instead.
+
+2025-04-07 15:53:38,522 - tensorflow - WARNING - From C:\Users\hp1\Desktop\MLOP\WeatherWise-Classifier-MLOP\venv\Lib\site-packages\keras\src\utils\tf_utils.py:492: The name tf.ragged.RaggedTensorValue is deprecated. Please use tf.compat.v1.ragged.RaggedTensorValue instead.
+
+2025-04-07 15:53:39,309 - tensorflow - WARNING - From C:\Users\hp1\Desktop\MLOP\WeatherWise-Classifier-MLOP\venv\Lib\site-packages\keras\src\engine\base_layer_utils.py:384: The name tf.executing_eagerly_outside_functions is deprecated. Please use tf.compat.v1.executing_eagerly_outside_functions instead.
+
+2025-04-07 15:58:45,002 - src.app.main - INFO - Generated model ID: c3ba1cb4-aeec-47e4-abfc-0d586ce261f5
+2025-04-07 15:58:46,958 - root - INFO - 
+Model Evaluation:
+2025-04-07 15:58:46,959 - root - INFO - Accuracy: 0.9735
+2025-04-07 15:58:46,959 - root - INFO - Precision: 0.9391
+2025-04-07 15:58:46,959 - root - INFO - Recall: 0.9879
+2025-04-07 15:58:46,959 - root - INFO - F1 Score: 0.9613
+2025-04-07 15:58:46,967 - root - INFO - Confusion Matrix:
+[[2881   61    7    0    0]
+ [   7 2834   56   47    0]
+ [   0    0  465    0    0]
+ [   0    0    0  244    0]
+ [   0    0    0    0  119]]
+2025-04-07 15:58:47,142 - src.app.main - INFO - Model saved successfully to models/model_c3ba1cb4-aeec-47e4-abfc-0d586ce261f5.h5

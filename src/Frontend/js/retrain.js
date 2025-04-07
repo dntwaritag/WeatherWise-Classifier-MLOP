@@ -1,7 +1,7 @@
 const API_BASE_URL = 'https://weatherwise-backend-ok73.onrender.com';
 const SESSION_STORAGE_KEY = 'retrainDataUploaded';
 const METRICS_STORAGE_KEY = 'retrainMetricsData';
-        
+
 // Static metrics from your notebook
 const staticMetrics = {
     accuracy: 0.9213,
@@ -75,13 +75,13 @@ function setUploadState(uploaded) {
     }
 }
 
-function updateConfusionMatrix(matrix) {
-    if (!matrix) return;
+function updateConfusionMatrix(matrixArray) {
+    if (!matrixArray || !Array.isArray(matrixArray)) return;
     
-    if (trueNegativeElem) trueNegativeElem.textContent = matrix.true_negative || '-';
-    if (falsePositiveElem) falsePositiveElem.textContent = matrix.false_positive || '-';
-    if (falseNegativeElem) falseNegativeElem.textContent = matrix.false_negative || '-';
-    if (truePositiveElem) truePositiveElem.textContent = matrix.true_positive || '-';
+    if (trueNegativeElem) trueNegativeElem.textContent = matrixArray[0]?.[0] ?? '-';
+    if (falsePositiveElem) falsePositiveElem.textContent = matrixArray[0]?.[1] ?? '-';
+    if (falseNegativeElem) falseNegativeElem.textContent = matrixArray[1]?.[0] ?? '-';
+    if (truePositiveElem) truePositiveElem.textContent = matrixArray[1]?.[1] ?? '-';
 }
 
 function saveMetricsToSession(metrics) {
@@ -206,7 +206,7 @@ retrainBtn.addEventListener("click", async function() {
             precision: result.metrics.precision,
             recall: result.metrics.recall,
             f1: result.metrics.f1,
-            confusion_matrix: result.metrics.confusion_matrix
+            confusion_matrix: result.metrics.confusion_matrix.matrix
         });
         
         displayRetrainedMetrics({
@@ -214,7 +214,7 @@ retrainBtn.addEventListener("click", async function() {
             precision: result.metrics.precision,
             recall: result.metrics.recall,
             f1: result.metrics.f1,
-            confusion_matrix: result.metrics.confusion_matrix
+            confusion_matrix: result.metrics.confusion_matrix.matrix
         });
         
         updateStatus(result.message || "Model retrained successfully!", false, true);
