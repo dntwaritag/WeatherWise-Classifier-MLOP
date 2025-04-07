@@ -1,4 +1,4 @@
-const API_BASE_URL = 'https://weatherwise-api.onrender.com';
+const API_BASE_URL = 'https://weatherwise-backend-ok73.onrender.com';
 const EXPECTED_FIELDS = [
     "precipitation", 
     "temp_max", 

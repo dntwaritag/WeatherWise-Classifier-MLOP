@@ -1,4 +1,4 @@
-const API_BASE_URL = 'https://weatherwise-api.onrender.com';
+const API_BASE_URL = 'https://weatherwise-backend-ok73.onrender.com';
 const SESSION_STORAGE_KEY = 'retrainDataUploaded';
 const METRICS_STORAGE_KEY = 'retrainMetricsData';
         
