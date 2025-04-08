@@ -5,10 +5,10 @@
 This project presents a weather classification system leveraging Machine Learning and MLOps principles. It enables users to classify weather conditions (e.g., rain, sun, fog) using meteorological data via a FastAPI backend, supported by model monitoring, versioning, and retraining workflows.
 
 ## Accessing the Site  
-- **Backend (FastAPI)**: [https://weatherwise-backend-ok73.onrender.com](https://weatherwise-backend-ok73.onrender.com)  
-- **Frontend**: [https://weatherwise-frontend.onrender.com ](https://weatherwise-frontend-prjt.onrender.com) 
+- **Backend (FastAPI)**: [Weatherwise-backend](https://weatherwise-backend-ok73.onrender.com)  
+- **Frontend**: [Weatherwise-frontend](https://weatherwise-frontend-prjt.onrender.com) 
 - **Demo Video**: *[Insert YouTube demo video link here]*  
-- **GitHub Repo**: *[Insert GitHub repository link here]*  
+- **GitHub Repo**: *[GitHub-repository](https://github.com/dntwaritag/WeatherWise-Classifier-MLOP.git)*  
 
 ## Features  
 - Real-time single and batch weather classification  
