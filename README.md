@@ -1,4 +1,4 @@
-# WeatherWise-Classifier MLOP Project 🌤️  
+# WeatherWise-Classifier MLOP Project  
 **Weather Classification using FastAPI, Docker, and MLOps Best Practices**
 
 ## Project Overview  
@@ -11,11 +11,11 @@ This project presents a weather classification system leveraging Machine Learnin
 - **GitHub Repo**: *[Insert GitHub repository link here]*  
 
 ## Features  
-- ✅ Real-time single and batch weather classification  
-- 📁 Upload CSV datasets for bulk predictions  
-- 📈 Monitoring for model drift and retraining triggers  
-- 📊 Model performance metrics available via endpoints  
-- 🚀 Dockerized for easy deployment and CI/CD compatibility  
+- Real-time single and batch weather classification  
+- Upload CSV datasets for bulk predictions  
+- Monitoring for model drift and retraining triggers  
+- Model performance metrics available via endpoints  
+- Dockerized for easy deployment and CI/CD compatibility  
 
 ## Project Structure  
 ```
@@ -105,5 +105,5 @@ This project is licensed under the MIT License. See LICENSE for details.
 
 9. **Contact**
 For support or questions:
-📧 Email: dntwaritag@alustudent.com
-🐙 GitHub: @dntwaritag
+- Email: dntwaritag@alustudent.com
+- GitHub: @dntwaritag
