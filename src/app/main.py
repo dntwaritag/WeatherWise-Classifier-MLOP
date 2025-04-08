@@ -324,7 +324,7 @@ async def retrain_model(db: Session = Depends(get_db)):
             history = model.fit(
                 X_train, y_train,
                 validation_data=(X_test, y_test),
-                epochs=50,
+                epochs=20,
                 batch_size=32,
                 callbacks=[early_stopping],
                 verbose=1
@@ -390,35 +390,40 @@ async def save_model_endpoint(request: SaveRequest, db: Session = Depends(get_db
         if not model_id:
             raise HTTPException(400, "Missing model_id")
 
-        # Check cache
-        model_data = trained_models_cache.get(model_id)
-        if not model_data:
-            logger.error(f"Model not found in cache: {model_id}")
-            raise HTTPException(404, "Model not found or expired")
-
-        # Get model from cache
-        model = model_data['model']
-        
-        # Save to persistent storage
+        # Check both cache and disk
         model_path = f"models/model_{model_id}.h5"
-        model.save(model_path)
         
-        # Remove from cache
-        del trained_models_cache[model_id]
-        
-        logger.info(f"Successfully saved model to {model_path}")
-        return SaveResponse(
-            success=True,
-            message="Model saved successfully",
-            model_path=model_path
-        )
-        
+        # If model exists in cache, save it
+        if model_id in trained_models_cache:
+            model_data = trained_models_cache[model_id]
+            model = model_data['model']
+            model.save(model_path)
+            del trained_models_cache[model_id]  # Remove from cache after save
+            logger.info(f"Successfully saved model to {model_path}")
+            return SaveResponse(
+                success=True,
+                message="Model saved successfully from cache",
+                model_path=model_path
+            )
+        # If model file exists on disk but not in cache
+        elif os.path.exists(model_path):
+            logger.info(f"Model already exists at {model_path}")
+            return SaveResponse(
+                success=True,
+                message="Model already exists in persistent storage",
+                model_path=model_path
+            )
+        else:
+            logger.error(f"Model not found: {model_id}")
+            raise HTTPException(404, "Model not found in cache or persistent storage")
+            
     except HTTPException as he:
         logger.error(f"HTTP Exception during model save: {he.detail}")
         raise
     except Exception as e:
         logger.error(f"Error saving model: {str(e)}", exc_info=True)
         raise HTTPException(500, str(e))
+
 
 @app.get("/")
 async def root():
