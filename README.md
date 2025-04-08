@@ -1,5 +1,3 @@
-Here's a tailored `README.md` file for your **WeatherWise-Classifier MLOP Project**, modeled on the structure and clarity of the *Bankruptcy Prediction ML Pipeline* example you provided. It includes updated content based on your original file, removes the table of contents, improves the project structure, and adds placeholders for your video demo and GitHub repo:
-
 ---
 
 # WeatherWise-Classifier MLOP Project 🌤️  
@@ -11,8 +9,8 @@ This project presents a weather classification system leveraging Machine Learnin
 ## Accessing the Site  
 - **Backend (FastAPI)**: [https://weatherwise-backend-ok73.onrender.com](https://weatherwise-backend-ok73.onrender.com)  
 - **Frontend**: [https://weatherwise-frontend.onrender.com](https://weatherwise-frontend.onrender.com)  
-- **Demo Video**: *[Insert your YouTube demo video link here]*  
-- **GitHub Repo**: *[Insert your GitHub repository link here]*  
+- **Demo Video**: *[Insert YouTube demo video link here]*  
+- **GitHub Repo**: *[Insert  GitHub repository link here]*  
 
 ## Features  
 ✅ Real-time single and batch weather classification  
