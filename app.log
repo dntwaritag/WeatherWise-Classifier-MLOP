@@ -1019,3 +1019,44 @@ Model Evaluation:
  [   0    0    0  244    0]
  [   0    0    0    0  119]]
 2025-04-07 15:58:47,142 - src.app.main - INFO - Model saved successfully to models/model_c3ba1cb4-aeec-47e4-abfc-0d586ce261f5.h5
+2025-04-07 20:47:12,277 - src.app.main - INFO - Starting training data upload
+2025-04-07 20:47:15,334 - src.app.main - INFO - Successfully added 99 records, 0 invalid records
+2025-04-07 21:57:04,313 - src.app.main - INFO - Root endpoint accessed
+2025-04-07 21:57:35,261 - src.app.main - INFO - Starting training data upload
+2025-04-07 21:57:37,313 - src.app.main - INFO - Successfully added 99 records, 0 invalid records
+2025-04-07 21:58:45,018 - src.app.main - INFO - Starting training data upload
+2025-04-07 21:58:46,712 - src.app.main - INFO - Successfully added 99 records, 0 invalid records
+2025-04-07 21:58:54,084 - src.app.main - INFO - Starting single prediction
+2025-04-07 21:58:57,833 - tensorflow - WARNING - From C:\Users\hp1\Desktop\MLOP\WeatherWise-Classifier-MLOP\venv\Lib\site-packages\keras\src\backend.py:1398: The name tf.executing_eagerly_outside_functions is deprecated. Please use tf.compat.v1.executing_eagerly_outside_functions instead.
+
+2025-04-07 21:59:00,428 - src.app.main - INFO - Successfully completed single prediction
+2025-04-07 21:59:20,555 - src.app.main - INFO - Starting bulk prediction
+2025-04-07 21:59:21,904 - src.app.main - INFO - Successfully completed bulk prediction for 438 records
+2025-04-07 21:59:30,667 - src.app.main - INFO - Starting model retraining process
+2025-04-07 21:59:37,673 - root - INFO - Applying Random Over-Sampling (imbalance ratio: 0.05)
+2025-04-07 21:59:37,705 - src.app.main - INFO - 
+=== DATA VALIDATION ===
+2025-04-07 21:59:37,707 - src.app.main - INFO - X_train shape: (77550, 8), dtype: float32
+2025-04-07 21:59:37,708 - src.app.main - INFO - y_train shape: (77550,), dtype: int32
+2025-04-07 21:59:37,712 - src.app.main - INFO - Unique y_train values: [0 1 2 3 4]
+2025-04-07 21:59:37,716 - src.app.main - INFO - Number of classes: 5
+2025-04-07 21:59:37,717 - src.app.main - INFO - X_train min/max: -2.9957356452941895, 5.0
+2025-04-07 21:59:37,717 - src.app.main - INFO - y_train min/max: 0, 4
+2025-04-07 21:59:39,290 - tensorflow - WARNING - From C:\Users\hp1\Desktop\MLOP\WeatherWise-Classifier-MLOP\venv\Lib\site-packages\keras\src\utils\tf_utils.py:492: The name tf.ragged.RaggedTensorValue is deprecated. Please use tf.compat.v1.ragged.RaggedTensorValue instead.
+
+2025-04-07 21:59:40,483 - tensorflow - WARNING - From C:\Users\hp1\Desktop\MLOP\WeatherWise-Classifier-MLOP\venv\Lib\site-packages\keras\src\engine\base_layer_utils.py:384: The name tf.executing_eagerly_outside_functions is deprecated. Please use tf.compat.v1.executing_eagerly_outside_functions instead.
+
+2025-04-07 22:15:29,594 - src.app.main - INFO - Generated model ID: 80d656dd-b100-4bd9-ad55-42b979f4e5cc
+2025-04-07 22:15:34,146 - root - INFO - 
+Model Evaluation:
+2025-04-07 22:15:34,147 - root - INFO - Accuracy: 0.9829
+2025-04-07 22:15:34,147 - root - INFO - Precision: 0.9527
+2025-04-07 22:15:34,148 - root - INFO - Recall: 0.9916
+2025-04-07 22:15:34,149 - root - INFO - F1 Score: 0.9711
+2025-04-07 22:15:34,161 - root - INFO - Confusion Matrix:
+[[3796   67    0    4   10]
+ [   0 3706   25   43    0]
+ [   0    0  586    0    0]
+ [   0    1    0  317    0]
+ [   0    0    0    0  196]]
+2025-04-07 22:15:34,823 - src.app.main - INFO - Model saved successfully to models/model_80d656dd-b100-4bd9-ad55-42b979f4e5cc.h5

@@ -2,7 +2,7 @@ const API_BASE_URL = 'https://weatherwise-backend-ok73.onrender.com';
 const SESSION_STORAGE_KEY = 'retrainDataUploaded';
 const METRICS_STORAGE_KEY = 'retrainMetricsData';
 
-// Static metrics from your notebook
+// Static metrics for the current model
 const staticMetrics = {
     accuracy: 0.9213,
     precision: 0.8643,
@@ -15,13 +15,9 @@ const uploadForm = document.getElementById("upload-form");
 const retrainBtn = document.getElementById("retrain-btn");
 const saveBtn = document.getElementById("save-model-btn");
 const statusDiv = document.getElementById("status");
-const uploadIndicator = document.createElement('span');
-uploadIndicator.className = 'upload-indicator';
-uploadIndicator.style.display = 'none';
-
-if (retrainBtn && retrainBtn.parentNode) {
-    retrainBtn.parentNode.insertBefore(uploadIndicator, retrainBtn.nextSibling);
-}
+const fileInput = document.getElementById("dataset-upload");
+const fileNameDisplay = document.getElementById("fileNameDisplay");
+const uploadIndicator = document.getElementById("upload-indicator");
 
 // Metrics elements
 const accuracyElem = document.getElementById("accuracy");
@@ -43,38 +39,85 @@ const truePositiveElem = document.getElementById("true-positive");
 // State
 let currentModelId = null;
 
+// Initialize the page
+function initializePage() {
+    // Set up file input display
+    fileInput.addEventListener("change", (e) => {
+        if (fileInput.files.length > 0) {
+            fileNameDisplay.textContent = fileInput.files[0].name;
+        } else {
+            fileNameDisplay.textContent = "No file selected";
+        }
+    });
+
+    // Set up drag and drop
+    const fileUploadBox = document.querySelector(".file-upload-box");
+    fileUploadBox.addEventListener("dragover", (e) => {
+        e.preventDefault();
+        fileUploadBox.classList.add("dragover");
+    });
+
+    fileUploadBox.addEventListener("dragleave", () => {
+        fileUploadBox.classList.remove("dragover");
+    });
+
+    fileUploadBox.addEventListener("drop", (e) => {
+        e.preventDefault();
+        fileUploadBox.classList.remove("dragover");
+        
+        if (e.dataTransfer.files.length) {
+            fileInput.files = e.dataTransfer.files;
+            fileNameDisplay.textContent = fileInput.files[0].name;
+        }
+    });
+
+    // Load any existing data from session storage
+    loadCurrentMetrics();
+}
+
+// Toggle spinner visibility
 function toggleSpinner(spinnerId, show) {
     const spinner = document.getElementById(spinnerId);
     if (spinner) {
-        spinner.style.display = show ? 'block' : 'none';
+        spinner.style.display = show ? 'inline-block' : 'none';
     }
 }
 
+// Update status message
 function updateStatus(message, isError = false, isSuccess = false) {
     if (statusDiv) {
-        statusDiv.textContent = message;
+        statusDiv.innerHTML = `<p>${message}</p>`;
         statusDiv.className = 'status';
         if (isError) statusDiv.classList.add('error');
         if (isSuccess) statusDiv.classList.add('success');
     }
 }
 
+// Format metric values for display
 function formatMetric(value) {
-    return value !== null && value !== undefined ? value.toFixed(4) : '-';
+    return value !== null && value !== undefined ? (value * 100).toFixed(2) + '%' : '-';
 }
 
+// Set upload state (enables/disables retrain button)
 function setUploadState(uploaded) {
     if (uploaded) {
         sessionStorage.setItem(SESSION_STORAGE_KEY, 'true');
         if (retrainBtn) retrainBtn.disabled = false;
-        uploadIndicator.style.display = 'inline-block';
+        if (uploadIndicator) {
+            uploadIndicator.style.display = 'inline-block';
+            uploadIndicator.innerHTML = '<i class="fas fa-check-circle"></i> Dataset Uploaded';
+        }
     } else {
         sessionStorage.removeItem(SESSION_STORAGE_KEY);
         if (retrainBtn) retrainBtn.disabled = true;
-        uploadIndicator.style.display = 'none';
+        if (uploadIndicator) {
+            uploadIndicator.style.display = 'none';
+            uploadIndicator.innerHTML = '';
+        }
     }
 }
 
+// Update confusion matrix display
 function updateConfusionMatrix(matrixArray) {
     if (!matrixArray || !Array.isArray(matrixArray)) return;
     
@@ -84,10 +127,12 @@ function updateConfusionMatrix(matrixArray) {
     if (truePositiveElem) truePositiveElem.textContent = matrixArray[1]?.[1] ?? '-';
 }
 
+// Save metrics to session storage
 function saveMetricsToSession(metrics) {
     sessionStorage.setItem(METRICS_STORAGE_KEY, JSON.stringify(metrics));
 }
 
+// Load metrics from session storage
 function loadMetricsFromSession() {
     const metricsData = sessionStorage.getItem(METRICS_STORAGE_KEY);
     if (metricsData) {
@@ -96,6 +141,7 @@ function loadMetricsFromSession() {
     return null;
 }
 
+// Display retrained metrics
 function displayRetrainedMetrics(metrics) {
     if (!metrics) return;
     
@@ -111,12 +157,15 @@ function displayRetrainedMetrics(metrics) {
     if (saveBtn) saveBtn.disabled = false;
 }
 
+// Load current metrics (static or from session)
 function loadCurrentMetrics() {
+    // Set static metrics for current model
     if (accuracyElem) accuracyElem.textContent = formatMetric(staticMetrics.accuracy);
     if (precisionElem) precisionElem.textContent = formatMetric(staticMetrics.precision);
     if (recallElem) recallElem.textContent = formatMetric(staticMetrics.recall);
     if (f1ScoreElem) f1ScoreElem.textContent = formatMetric(staticMetrics.f1);
     
+    // Check if we have uploaded data in this session
     if (sessionStorage.getItem(SESSION_STORAGE_KEY)) {
         setUploadState(true);
         updateStatus("Dataset already uploaded in this session. You can retrain the model.", false, true);
@@ -124,6 +173,7 @@ function loadCurrentMetrics() {
         updateStatus("Upload a dataset to begin retraining process");
     }
     
+    // Check if we have retrained model metrics in session
     const savedMetrics = loadMetricsFromSession();
     if (savedMetrics) {
         displayRetrainedMetrics(savedMetrics);
@@ -131,11 +181,11 @@ function loadCurrentMetrics() {
     }
 }
 
-uploadForm.addEventListener("submit", async function(event) {
+// Handle dataset upload
+async function handleDatasetUpload(event) {
     event.preventDefault();
-    const fileInput = document.getElementById("dataset-upload");
     
-    if (!fileInput || !fileInput.files || fileInput.files.length === 0) {
+    if (!fileInput.files || fileInput.files.length === 0) {
         updateStatus("Please select a file first", true);
         return;
     }
@@ -164,7 +214,11 @@ uploadForm.addEventListener("submit", async function(event) {
         }
         
         const result = await response.json();
-        updateStatus(`Successfully uploaded ${result.records_added} records. ${result.invalid_records} records were invalid.`, false, true);
+        updateStatus(
+            `Successfully uploaded ${result.records_added} records. ${result.invalid_records} records were invalid.`, 
+            false, 
+            true
+        );
         setUploadState(true);
         
     } catch (error) {
@@ -173,9 +227,10 @@ uploadForm.addEventListener("submit", async function(event) {
     } finally {
         toggleSpinner('upload-spinner', false);
     }
-});
+}
 
-retrainBtn.addEventListener("click", async function() {
+// Handle model retraining
+async function handleModelRetrain() {
     toggleSpinner('retrain-spinner', true);
     updateStatus("Retraining model... This may take a few moments.");
     
@@ -201,6 +256,7 @@ retrainBtn.addEventListener("click", async function() {
         const result = await response.json();
         currentModelId = result.model_id;
         
+        // Save metrics to session storage
         saveMetricsToSession({
             accuracy: result.metrics.accuracy,
             precision: result.metrics.precision,
@@ -209,6 +265,7 @@ retrainBtn.addEventListener("click", async function() {
             confusion_matrix: result.metrics.confusion_matrix.matrix
         });
         
+        // Display the new metrics
         displayRetrainedMetrics({
             accuracy: result.metrics.accuracy,
             precision: result.metrics.precision,
@@ -225,9 +282,10 @@ retrainBtn.addEventListener("click", async function() {
     } finally {
         toggleSpinner('retrain-spinner', false);
     }
-});
+}
 
-saveBtn.addEventListener("click", async function() {
+// Handle model saving
+async function handleModelSave() {
     if (!currentModelId) {
         updateStatus("No model to save. Please retrain first.", true);
         return;
@@ -236,8 +294,10 @@ saveBtn.addEventListener("click", async function() {
     const saveStatus = document.getElementById("save-status");
     if (saveStatus) {
         saveStatus.textContent = "Saving model...";
-        saveStatus.style.color = "inherit";
+        saveStatus.className = 'save-status';
     }
+    
+    toggleSpinner('save-spinner', true);
     
     try {
         const response = await fetch(`${API_BASE_URL}/save-model/`, {
@@ -263,33 +323,73 @@ saveBtn.addEventListener("click", async function() {
         
         const result = await response.json();
         
-        staticMetrics.accuracy = parseFloat(newAccuracyElem.textContent) || staticMetrics.accuracy;
-        staticMetrics.precision = parseFloat(newPrecisionElem.textContent) || staticMetrics.precision;
-        staticMetrics.recall = parseFloat(newRecallElem.textContent) || staticMetrics.recall;
-        staticMetrics.f1 = parseFloat(newF1ScoreElem.textContent) || staticMetrics.f1;
+        // Update static metrics with the new model's metrics
+        staticMetrics.accuracy = parseFloat(newAccuracyElem.textContent) / 100 || staticMetrics.accuracy;
+        staticMetrics.precision = parseFloat(newPrecisionElem.textContent) / 100 || staticMetrics.precision;
+        staticMetrics.recall = parseFloat(newRecallElem.textContent) / 100 || staticMetrics.recall;
+        staticMetrics.f1 = parseFloat(newF1ScoreElem.textContent) / 100 || staticMetrics.f1;
         
+        // Update current metrics display
         if (accuracyElem) accuracyElem.textContent = formatMetric(staticMetrics.accuracy);
         if (precisionElem) precisionElem.textContent = formatMetric(staticMetrics.precision);
         if (recallElem) recallElem.textContent = formatMetric(staticMetrics.recall);
         if (f1ScoreElem) f1ScoreElem.textContent = formatMetric(staticMetrics.f1);
         
+        // Clear session storage
         sessionStorage.removeItem(METRICS_STORAGE_KEY);
         
         if (saveStatus) {
             saveStatus.textContent = result.message || "Model saved successfully!";
-            saveStatus.style.color = "#2e7d32";
+            saveStatus.classList.add('success');
         }
         updateStatus("Model saved successfully! Current metrics updated.", false, true);
+        
+        // Disable save button after successful save
+        if (saveBtn) saveBtn.disabled = true;
         
     } catch (error) {
         console.error("Save error:", error);
         if (saveStatus) {
             saveStatus.textContent = `Save failed: ${error.message}`;
-            saveStatus.style.color = "#c62828";
+            saveStatus.classList.add('error');
         }
+    } finally {
+        toggleSpinner('save-spinner', false);
     }
-});
+}
 
+// Show toast notification
+function showToast(message, type = 'info') {
+    const toast = document.createElement('div');
+    toast.className = `toast toast-${type}`;
+    toast.innerHTML = `
+        <div class="toast-content">
+            <i class="fas ${type === 'error' ? 'fa-exclamation-circle' : 
+                          type === 'success' ? 'fa-check-circle' : 
+                          'fa-info-circle'}"></i>
+            <span>${message}</span>
+        </div>
+    `;
+    
+    document.body.appendChild(toast);
+    
+    setTimeout(() => {
+        toast.classList.add('show');
+    }, 10);
+    
+    setTimeout(() => {
+        toast.classList.remove('show');
+        setTimeout(() => {
+            toast.remove();
+        }, 300);
+    }, 5000);
+}
+
+// Event listeners
 document.addEventListener('DOMContentLoaded', () => {
-    loadCurrentMetrics();
+    initializePage();
+    
+    uploadForm.addEventListener("submit", handleDatasetUpload);
+    retrainBtn.addEventListener("click", handleModelRetrain);
+    saveBtn.addEventListener("click", handleModelSave);
 });

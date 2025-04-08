@@ -3,90 +3,172 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Retrain Model</title>
+    <title>Retrain Model | WeatherWise</title>
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="../css/retrain.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 <body>
     <nav>
-        <h2>🌧️ WeatherWise</h2>
-        <ul>
-            <li><a href="main.html">Home</a></li>
-            <li><a href="predict.html">Prediction</a></li>
-            <li><a href="retrain.html">Retrain Model</a></li>
-            <li><a href="visuals.html">Data Visualizations</a></li>
-        </ul>
+        <div class="nav-container">
+            <h2><i class="fas fa-cloud-sun-rain"></i> WeatherWise</h2>
+            <ul>
+                <li><a href="main.html"><i class="fas fa-home"></i> Home</a></li>
+                <li><a href="predict.html"><i class="fas fa-chart-line"></i> Prediction</a></li>
+                <li><a href="retrain.html" class="active"><i class="fas fa-cogs"></i> Retrain Model</a></li>
+                <li><a href="visuals.html"><i class="fas fa-images"></i> Visualizations</a></li>
+            </ul>
+        </div>
     </nav>
     
     <div class="content">
-        <h2>Retrain Model</h2>
-        
-        <!-- Form for uploading dataset -->
-        <form id="upload-form" enctype="multipart/form-data" class="retrain-form">
-            <div class="form-item">
-                <label for="dataset-upload">Upload Dataset (CSV/Excel):</label>
-                <input type="file" id="dataset-upload" name="dataset" accept=".csv,.xlsx,.xls" required>
+        <div class="retrain-container">
+            <div class="header-section">
+                <h1><i class="fas fa-brain"></i> Model Retraining</h1>
+                <p>Upload new training data and retrain the weather prediction model</p>
             </div>
-            
-            <button type="submit">Upload Dataset</button>
-            <div class="spinner" id="upload-spinner"></div>
-        </form>
 
-        <!-- Retrain button -->
-        <div class="retrain-section">
-            <button id="retrain-btn" disabled>Retrain Model</button>
-            <div class="spinner" id="retrain-spinner"></div>
-        </div>
-
-        <!-- Model status feedback -->
-        <div class="status" id="status">
-            <p>Upload a dataset to begin retraining process</p>
-        </div>
-
-        <!-- Model metrics display -->
-        <div class="metrics-container">
-            <div class="metrics-box">
-                <h3>Current Model Metrics</h3>
-                <ul>
-                    <li><strong>Accuracy:</strong> <span id="accuracy">-</span></li>
-                    <li><strong>Precision:</strong> <span id="precision">-</span></li>
-                    <li><strong>Recall:</strong> <span id="recall">-</span></li>
-                    <li><strong>F1-Score:</strong> <span id="f1-score">-</span></li>
-                </ul>
+            <!-- Data Upload Section -->
+            <div class="upload-section">
+                <form id="upload-form" enctype="multipart/form-data" class="retrain-form">
+                    <div class="form-header">
+                        <h2><i class="fas fa-file-upload"></i> Upload Training Data</h2>
+                        <p>Upload a CSV or Excel file containing weather records</p>
+                    </div>
+                    
+                    <div class="file-upload-container">
+                        <div class="file-upload-box">
+                            <i class="fas fa-cloud-upload-alt"></i>
+                            <p>Drag & drop your file here or click to browse</p>
+                            <input type="file" id="dataset-upload" name="dataset" accept=".csv,.xlsx,.xls" required>
+                            <label for="dataset-upload" class="file-upload-button">Choose File</label>
+                            <div id="fileNameDisplay">No file selected</div>
+                        </div>
+                    </div>
+                    
+                    <div class="file-requirements">
+                        <h4><i class="fas fa-info-circle"></i> File Requirements:</h4>
+                        <ul>
+                            <li>CSV or Excel format (.csv, .xlsx, .xls)</li>
+                            <li>Required columns: precipitation, temp_max, temp_min, wind, weather</li>
+                            <li>Optional column: date</li>
+                            <li>Max file size: 10MB</li>
+                        </ul>
+                    </div>
+                    
+                    <div class="form-actions">
+                        <button type="submit" class="upload-button">
+                            <i class="fas fa-upload"></i> Upload Dataset
+                        </button>
+                        <div class="spinner" id="upload-spinner"></div>
+                    </div>
+                </form>
             </div>
-            
-            <div class="metrics-box">
-                <h3>New Model Metrics</h3>
-                <ul>
-                    <li><strong>Accuracy:</strong> <span id="new-accuracy">-</span></li>
-                    <li><strong>Precision:</strong> <span id="new-precision">-</span></li>
-                    <li><strong>Recall:</strong> <span id="new-recall">-</span></li>
-                    <li><strong>F1-Score:</strong> <span id="new-f1-score">-</span></li>
-                </ul>
-            </div>
-        </div>
 
-        <!-- Confusion Matrix for Retrained Model -->
-        <div class="confusion-matrix-container">
-            <h3>Retrained Model Confusion Matrix</h3>
-            <div class="matrix-grid">
-                <div class="matrix-header"></div>
-                <div class="matrix-header">Predicted Sun</div>
-                <div class="matrix-header">Predicted Rain</div>
+            <!-- Retrain Section -->
+            <div class="retrain-section">
+                <div class="section-header">
+                    <h2><i class="fas fa-cogs"></i> Model Retraining</h2>
+                    <p>Retrain the model with the uploaded dataset</p>
+                </div>
                 
-                <div class="matrix-header">Actual Sun</div>
-                <div class="matrix-cell" id="true-negative">-</div>
-                <div class="matrix-cell" id="false-positive">-</div>
+                <div class="retrain-controls">
+                    <button id="retrain-btn" class="retrain-button" disabled>
+                        <i class="fas fa-brain"></i> Retrain Model
+                    </button>
+                    <div class="spinner" id="retrain-spinner"></div>
+                    <div class="upload-indicator" id="upload-indicator"></div>
+                </div>
                 
-                <div class="matrix-header">Actual Rain</div>
-                <div class="matrix-cell" id="false-negative">-</div>
-                <div class="matrix-cell" id="true-positive">-</div>
+                <div class="status" id="status">
+                    <p>Upload a dataset to begin retraining process</p>
+                </div>
             </div>
-        </div>
-        <!-- Save model section -->
-        <div class="save-model">
-            <button id="save-model-btn" disabled>Save Retrained Model</button>
-            <p id="save-status"></p>
+
+            <!-- Metrics Comparison -->
+            <div class="metrics-section">
+                <h2><i class="fas fa-chart-bar"></i> Model Performance</h2>
+                
+                <div class="metrics-grid">
+                    <div class="metrics-box">
+                        <h3><i class="fas fa-chart-line"></i> Current Model</h3>
+                        <div class="metrics-content">
+                            <div class="metric-item">
+                                <span class="metric-label">Accuracy:</span>
+                                <span class="metric-value" id="accuracy">-</span>
+                            </div>
+                            <div class="metric-item">
+                                <span class="metric-label">Precision:</span>
+                                <span class="metric-value" id="precision">-</span>
+                            </div>
+                            <div class="metric-item">
+                                <span class="metric-label">Recall:</span>
+                                <span class="metric-value" id="recall">-</span>
+                            </div>
+                            <div class="metric-item">
+                                <span class="metric-label">F1 Score:</span>
+                                <span class="metric-value" id="f1-score">-</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="metrics-box">
+                        <h3><i class="fas fa-star"></i> Retrained Model</h3>
+                        <div class="metrics-content">
+                            <div class="metric-item">
+                                <span class="metric-label">Accuracy:</span>
+                                <span class="metric-value" id="new-accuracy">-</span>
+                            </div>
+                            <div class="metric-item">
+                                <span class="metric-label">Precision:</span>
+                                <span class="metric-value" id="new-precision">-</span>
+                            </div>
+                            <div class="metric-item">
+                                <span class="metric-label">Recall:</span>
+                                <span class="metric-value" id="new-recall">-</span>
+                            </div>
+                            <div class="metric-item">
+                                <span class="metric-label">F1 Score:</span>
+                                <span class="metric-value" id="new-f1-score">-</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Confusion Matrix -->
+            <div class="confusion-matrix-section">
+                <h2><i class="fas fa-project-diagram"></i> Confusion Matrix</h2>
+                <p>Performance of the retrained model on test data</p>
+                
+                <div class="matrix-container">
+                    <div class="matrix-grid">
+                        <div class="matrix-header"></div>
+                        <div class="matrix-header">Predicted Sun</div>
+                        <div class="matrix-header">Predicted Rain</div>
+                        
+                        <div class="matrix-header">Actual Sun</div>
+                        <div class="matrix-cell" id="true-negative">-</div>
+                        <div class="matrix-cell" id="false-positive">-</div>
+                        
+                        <div class="matrix-header">Actual Rain</div>
+                        <div class="matrix-cell" id="false-negative">-</div>
+                        <div class="matrix-cell" id="true-positive">-</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Save Model Section -->
+            <div class="save-section">
+                <h2><i class="fas fa-save"></i> Save Retrained Model</h2>
+                <p>Save the retrained model to make it the active prediction model</p>
+                
+                <button id="save-model-btn" class="save-button" disabled>
+                    <i class="fas fa-check-circle"></i> Save Model
+                </button>
+                <div class="spinner" id="save-spinner"></div>
+                <div class="save-status" id="save-status"></div>
+            </div>
         </div>
     </div>
 
