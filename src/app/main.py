@@ -58,6 +58,7 @@ app.add_middleware(
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
+    expose_headers=["*"]
 )
 
 # Constants
@@ -324,7 +325,7 @@ async def retrain_model(db: Session = Depends(get_db)):
             history = model.fit(
                 X_train, y_train,
                 validation_data=(X_test, y_test),
-                epochs=20,
+                epochs=10,
                 batch_size=32,
                 callbacks=[early_stopping],
                 verbose=1

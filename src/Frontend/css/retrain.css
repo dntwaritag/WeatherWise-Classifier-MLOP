@@ -673,3 +673,61 @@
         font-size: 14px;
     }
 }
+
+
+
+
+.confusion-matrix-table {
+    border-collapse: collapse;
+    margin: 20px auto;
+    font-size: 0.9em;
+    width: 100%;
+    max-width: 800px;
+}
+
+.confusion-matrix-table th, 
+.confusion-matrix-table td {
+    border: 1px solid #ddd;
+    padding: 8px 12px;
+    text-align: center;
+}
+
+.confusion-matrix-table th {
+    background-color: #f2f2f2;
+    font-weight: 600;
+}
+
+.confusion-matrix-table tr:hover {
+    background-color: #f5f5f5;
+}
+
+.matrix-container {
+    overflow-x: auto;
+    margin: 20px 0;
+}
+
+
+/* addtion for saing model */
+.save-status {
+    margin-top: 10px;
+    padding: 8px 12px;
+    border-radius: 4px;
+    font-size: 0.9em;
+    display: none; /* Initially hidden */
+}
+
+.save-status.success {
+    background-color: #e6f7e6;
+    color: #2e7d32;
+    border: 1px solid #c8e6c9;
+}
+
+.save-status.error {
+    background-color: #ffebee;
+    color: #c62828;
+    border: 1px solid #ffcdd2;
+}
+
+.save-status i {
+    margin-right: 8px;
+}

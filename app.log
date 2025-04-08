@@ -1177,3 +1177,138 @@ Model Evaluation:
 2025-04-08 10:18:00,965 - src.app.main - INFO - Model saved successfully to models/model_6d700b41-f44a-4058-a596-50ea95cb11c2.h5
 2025-04-08 10:19:09,663 - src.app.main - INFO - Starting model save operation
 2025-04-08 10:19:09,721 - src.app.main - INFO - Successfully saved model to models/model_6d700b41-f44a-4058-a596-50ea95cb11c2.h5
+2025-04-08 12:14:54,213 - src.app.database - INFO - Database tables initialized successfully
+2025-04-08 12:15:40,270 - src.app.main - INFO - Root endpoint accessed
+2025-04-08 12:18:18,901 - src.app.main - INFO - Root endpoint accessed
+2025-04-08 12:18:44,607 - src.app.main - INFO - Starting training data upload
+2025-04-08 12:18:46,165 - src.app.main - INFO - Successfully added 99 records, 0 invalid records
+2025-04-08 12:19:02,916 - src.app.main - INFO - Starting model retraining process
+2025-04-08 12:19:08,535 - root - INFO - Applying Random Over-Sampling (imbalance ratio: 0.06)
+2025-04-08 12:19:08,552 - src.app.main - INFO - 
+=== DATA VALIDATION ===
+2025-04-08 12:19:08,552 - src.app.main - INFO - X_train shape: (82845, 8), dtype: float32
+2025-04-08 12:19:08,553 - src.app.main - INFO - y_train shape: (82845,), dtype: int32
+2025-04-08 12:19:08,555 - src.app.main - INFO - Unique y_train values: [0 1 2 3 4]
+2025-04-08 12:19:08,558 - src.app.main - INFO - Number of classes: 5
+2025-04-08 12:19:08,558 - src.app.main - INFO - X_train min/max: -2.9559669494628906, 5.0
+2025-04-08 12:19:08,559 - src.app.main - INFO - y_train min/max: 0, 4
+2025-04-08 12:19:08,967 - tensorflow - WARNING - From C:\Users\hp1\Desktop\MLOP-w\WeatherWise-Classifier-MLOP\venv\Lib\site-packages\keras\src\backend.py:277: The name tf.reset_default_graph is deprecated. Please use tf.compat.v1.reset_default_graph instead.
+
+2025-04-08 12:19:10,076 - tensorflow - WARNING - From C:\Users\hp1\Desktop\MLOP-w\WeatherWise-Classifier-MLOP\venv\Lib\site-packages\keras\src\utils\tf_utils.py:492: The name tf.ragged.RaggedTensorValue is deprecated. Please use tf.compat.v1.ragged.RaggedTensorValue instead.
+
+2025-04-08 12:19:10,765 - tensorflow - WARNING - From C:\Users\hp1\Desktop\MLOP-w\WeatherWise-Classifier-MLOP\venv\Lib\site-packages\keras\src\engine\base_layer_utils.py:384: The name tf.executing_eagerly_outside_functions is deprecated. Please use tf.compat.v1.executing_eagerly_outside_functions instead.
+
+2025-04-08 12:20:10,812 - src.app.main - INFO - Generated model ID: 44432008-d281-493b-82bf-37ccf0673f57
+2025-04-08 12:20:11,478 - root - INFO - 
+Model Evaluation:
+2025-04-08 12:20:11,479 - root - INFO - Accuracy: 0.9023
+2025-04-08 12:20:11,479 - root - INFO - Precision: 0.801
+2025-04-08 12:20:11,479 - root - INFO - Recall: 0.9511
+2025-04-08 12:20:11,479 - root - INFO - F1 Score: 0.8486
+2025-04-08 12:20:11,480 - root - INFO - Confusion Matrix:
+[[3895  171   46   15   16]
+ [   4 3308  250  392    0]
+ [   0   13  593    0    0]
+ [   0    0    0  339    0]
+ [   0    0    0    0  239]]
+2025-04-08 12:20:11,539 - src.app.main - INFO - Model saved successfully to models/model_44432008-d281-493b-82bf-37ccf0673f57.h5
+2025-04-08 12:32:35,420 - src.app.main - INFO - Starting training data upload
+2025-04-08 12:32:37,464 - src.app.main - INFO - Successfully added 99 records, 0 invalid records
+2025-04-08 12:32:58,676 - src.app.main - INFO - Starting model retraining process
+2025-04-08 12:33:06,087 - root - INFO - Applying Random Over-Sampling (imbalance ratio: 0.06)
+2025-04-08 12:33:06,107 - src.app.main - INFO - 
+=== DATA VALIDATION ===
+2025-04-08 12:33:06,108 - src.app.main - INFO - X_train shape: (83535, 8), dtype: float32
+2025-04-08 12:33:06,108 - src.app.main - INFO - y_train shape: (83535,), dtype: int32
+2025-04-08 12:33:06,111 - src.app.main - INFO - Unique y_train values: [0 1 2 3 4]
+2025-04-08 12:33:06,112 - src.app.main - INFO - Number of classes: 5
+2025-04-08 12:33:06,113 - src.app.main - INFO - X_train min/max: -2.9484291076660156, 5.0
+2025-04-08 12:33:06,114 - src.app.main - INFO - y_train min/max: 0, 4
+2025-04-08 12:34:14,323 - src.app.main - INFO - Generated model ID: 222f60da-5cca-497b-ba5d-c753a57ddd52
+2025-04-08 12:34:14,917 - root - INFO - 
+Model Evaluation:
+2025-04-08 12:34:14,917 - root - INFO - Accuracy: 0.9176
+2025-04-08 12:34:14,918 - root - INFO - Precision: 0.8196
+2025-04-08 12:34:14,918 - root - INFO - Recall: 0.9595
+2025-04-08 12:34:14,918 - root - INFO - F1 Score: 0.8693
+2025-04-08 12:34:14,919 - root - INFO - Confusion Matrix:
+[[3943  176   23   15   19]
+ [   0 3439  263  266    0]
+ [   0    0  598    8    0]
+ [   0    0    0  341    0]
+ [   0    0    0    0  249]]
+2025-04-08 12:34:14,986 - src.app.main - INFO - Model saved successfully to models/model_222f60da-5cca-497b-ba5d-c753a57ddd52.h5
+2025-04-08 12:47:42,628 - src.app.main - INFO - Starting training data upload
+2025-04-08 12:47:44,719 - src.app.main - INFO - Successfully added 99 records, 0 invalid records
+2025-04-08 12:47:47,741 - src.app.main - INFO - Starting model retraining process
+2025-04-08 12:47:55,889 - root - INFO - Applying Random Over-Sampling (imbalance ratio: 0.06)
+2025-04-08 12:47:55,915 - src.app.main - INFO - 
+=== DATA VALIDATION ===
+2025-04-08 12:47:55,917 - src.app.main - INFO - X_train shape: (83760, 8), dtype: float32
+2025-04-08 12:47:55,917 - src.app.main - INFO - y_train shape: (83760,), dtype: int32
+2025-04-08 12:47:55,922 - src.app.main - INFO - Unique y_train values: [0 1 2 3 4]
+2025-04-08 12:47:55,926 - src.app.main - INFO - Number of classes: 5
+2025-04-08 12:47:55,927 - src.app.main - INFO - X_train min/max: -2.9463376998901367, 5.0
+2025-04-08 12:47:55,927 - src.app.main - INFO - y_train min/max: 0, 4
+2025-04-08 12:49:01,847 - src.app.main - INFO - Generated model ID: b829bb50-5c52-4350-9543-0a57c17ae734
+2025-04-08 12:49:02,694 - root - INFO - 
+Model Evaluation:
+2025-04-08 12:49:02,694 - root - INFO - Accuracy: 0.9112
+2025-04-08 12:49:02,695 - root - INFO - Precision: 0.8155
+2025-04-08 12:49:02,695 - root - INFO - Recall: 0.9587
+2025-04-08 12:49:02,695 - root - INFO - F1 Score: 0.8652
+2025-04-08 12:49:02,695 - root - INFO - Confusion Matrix:
+[[3993  144   26    7   18]
+ [   7 3336  417  212    0]
+ [   0    0  606    0    0]
+ [   0    0    0  342    0]
+ [   0    0    0    0  252]]
+2025-04-08 12:49:02,751 - src.app.main - INFO - Model saved successfully to models/model_b829bb50-5c52-4350-9543-0a57c17ae734.h5
+2025-04-08 12:50:13,185 - src.app.main - INFO - Starting model retraining process
+2025-04-08 12:50:18,265 - root - INFO - Applying Random Over-Sampling (imbalance ratio: 0.06)
+2025-04-08 12:50:18,282 - src.app.main - INFO - 
+=== DATA VALIDATION ===
+2025-04-08 12:50:18,283 - src.app.main - INFO - X_train shape: (83760, 8), dtype: float32
+2025-04-08 12:50:18,283 - src.app.main - INFO - y_train shape: (83760,), dtype: int32
+2025-04-08 12:50:18,285 - src.app.main - INFO - Unique y_train values: [0 1 2 3 4]
+2025-04-08 12:50:18,286 - src.app.main - INFO - Number of classes: 5
+2025-04-08 12:50:18,287 - src.app.main - INFO - X_train min/max: -2.9463376998901367, 5.0
+2025-04-08 12:50:18,288 - src.app.main - INFO - y_train min/max: 0, 4
+2025-04-08 12:52:19,382 - src.app.main - INFO - Generated model ID: 3c741af9-22e8-4e0b-b9fe-4dc1d5eef852
+2025-04-08 12:52:20,753 - root - INFO - 
+Model Evaluation:
+2025-04-08 12:52:20,754 - root - INFO - Accuracy: 0.9047
+2025-04-08 12:52:20,754 - root - INFO - Precision: 0.7914
+2025-04-08 12:52:20,755 - root - INFO - Recall: 0.954
+2025-04-08 12:52:20,755 - root - INFO - F1 Score: 0.8479
+2025-04-08 12:52:20,756 - root - INFO - Confusion Matrix:
+[[3964  139   32   10   43]
+ [  14 3310  391  257    0]
+ [   0    6  600    0    0]
+ [   0    0    0  342    0]
+ [   0    0    0    0  252]]
+2025-04-08 12:52:20,802 - src.app.main - INFO - Model saved successfully to models/model_3c741af9-22e8-4e0b-b9fe-4dc1d5eef852.h5
+2025-04-08 12:58:36,780 - src.app.main - INFO - Starting model retraining process
+2025-04-08 12:58:43,758 - root - INFO - Applying Random Over-Sampling (imbalance ratio: 0.06)
+2025-04-08 12:58:43,774 - src.app.main - INFO - 
+=== DATA VALIDATION ===
+2025-04-08 12:58:43,775 - src.app.main - INFO - X_train shape: (83760, 8), dtype: float32
+2025-04-08 12:58:43,776 - src.app.main - INFO - y_train shape: (83760,), dtype: int32
+2025-04-08 12:58:43,777 - src.app.main - INFO - Unique y_train values: [0 1 2 3 4]
+2025-04-08 12:58:43,780 - src.app.main - INFO - Number of classes: 5
+2025-04-08 12:58:43,782 - src.app.main - INFO - X_train min/max: -2.9463376998901367, 5.0
+2025-04-08 12:58:43,782 - src.app.main - INFO - y_train min/max: 0, 4
+2025-04-08 13:00:34,430 - src.app.main - INFO - Generated model ID: 10a1eb99-2645-4a38-ac2a-23245b1a0327
+2025-04-08 13:00:35,717 - root - INFO - 
+Model Evaluation:
+2025-04-08 13:00:35,718 - root - INFO - Accuracy: 0.905
+2025-04-08 13:00:35,718 - root - INFO - Precision: 0.8056
+2025-04-08 13:00:35,718 - root - INFO - Recall: 0.9559
+2025-04-08 13:00:35,718 - root - INFO - F1 Score: 0.8583
+2025-04-08 13:00:35,719 - root - INFO - Confusion Matrix:
+[[3939  180   39    0   30]
+ [   0 3332  434  206    0]
+ [   0    0  606    0    0]
+ [   0    0    0  342    0]
+ [   0    0    0    0  252]]
+2025-04-08 13:00:35,786 - src.app.main - INFO - Model saved successfully to models/model_10a1eb99-2645-4a38-ac2a-23245b1a0327.h5

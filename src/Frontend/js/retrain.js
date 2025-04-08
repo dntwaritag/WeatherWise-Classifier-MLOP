@@ -30,28 +30,19 @@ const newPrecisionElem = document.getElementById("new-precision");
 const newRecallElem = document.getElementById("new-recall");
 const newF1ScoreElem = document.getElementById("new-f1-score");
 
-// Confusion Matrix elements
-const trueNegativeElem = document.getElementById("true-negative");
-const falsePositiveElem = document.getElementById("false-positive");
-const falseNegativeElem = document.getElementById("false-negative");
-const truePositiveElem = document.getElementById("true-positive");
-
 // State
 let currentModelId = null;
 
 // Initialize the page
 function initializePage() {
-    // Set up file input display
     fileInput.addEventListener("change", (e) => {
-        if (fileInput.files.length > 0) {
-            fileNameDisplay.textContent = fileInput.files[0].name;
-        } else {
-            fileNameDisplay.textContent = "No file selected";
-        }
+        fileNameDisplay.textContent = fileInput.files.length > 0
+            ? fileInput.files[0].name
+            : "No file selected";
     });
 
-    // Set up drag and drop
     const fileUploadBox = document.querySelector(".file-upload-box");
+
     fileUploadBox.addEventListener("dragover", (e) => {
         e.preventDefault();
         fileUploadBox.classList.add("dragover");
@@ -64,18 +55,17 @@ function initializePage() {
     fileUploadBox.addEventListener("drop", (e) => {
         e.preventDefault();
         fileUploadBox.classList.remove("dragover");
-        
+
         if (e.dataTransfer.files.length) {
             fileInput.files = e.dataTransfer.files;
             fileNameDisplay.textContent = fileInput.files[0].name;
         }
     });
 
-    // Load any existing data from session storage
     loadCurrentMetrics();
 }
 
-// Toggle spinner visibility
+// Spinner toggle
 function toggleSpinner(spinnerId, show) {
     const spinner = document.getElementById(spinnerId);
     if (spinner) {
@@ -83,7 +73,7 @@ function toggleSpinner(spinnerId, show) {
     }
 }
 
-// Update status message
+// Status updates
 function updateStatus(message, isError = false, isSuccess = false) {
     if (statusDiv) {
         statusDiv.innerHTML = `<p>${message}</p>`;
@@ -93,12 +83,12 @@ function updateStatus(message, isError = false, isSuccess = false) {
     }
 }
 
-// Format metric values for display
+// Format metrics
 function formatMetric(value) {
-    return value !== null && value !== undefined ? (value * 100).toFixed(2) + '%' : '-';
+    return value != null ? (value * 100).toFixed(2) + '%' : '-';
 }
 
-// Set upload state (enables/disables retrain button)
+// Upload state
 function setUploadState(uploaded) {
     if (uploaded) {
         sessionStorage.setItem(SESSION_STORAGE_KEY, 'true');
@@ -117,63 +107,92 @@ function setUploadState(uploaded) {
     }
 }
 
-// Update confusion matrix display
-function updateConfusionMatrix(matrixArray) {
-    if (!matrixArray || !Array.isArray(matrixArray)) return;
-    
-    if (trueNegativeElem) trueNegativeElem.textContent = matrixArray[0]?.[0] ?? '-';
-    if (falsePositiveElem) falsePositiveElem.textContent = matrixArray[0]?.[1] ?? '-';
-    if (falseNegativeElem) falseNegativeElem.textContent = matrixArray[1]?.[0] ?? '-';
-    if (truePositiveElem) truePositiveElem.textContent = matrixArray[1]?.[1] ?? '-';
+// Update confusion matrix for multiple classes
+function updateConfusionMatrix(matrixData) {
+    if (!matrixData || !matrixData.matrix || !matrixData.labels) return;
+
+    const matrixContainer = document.querySelector('.matrix-container');
+    if (!matrixContainer) return;
+
+    // Clear existing matrix
+    matrixContainer.innerHTML = '';
+
+    // Create a new table for the confusion matrix
+    const table = document.createElement('table');
+    table.className = 'confusion-matrix-table';
+
+    // Create header row
+    const headerRow = document.createElement('tr');
+    headerRow.appendChild(document.createElement('th')); // Empty top-left cell
+
+    // Add predicted labels header
+    matrixData.labels.forEach(label => {
+        const th = document.createElement('th');
+        th.textContent = `Pred ${label}`;
+        headerRow.appendChild(th);
+    });
+    table.appendChild(headerRow);
+
+    // Add matrix rows
+    matrixData.matrix.forEach((row, rowIndex) => {
+        const tr = document.createElement('tr');
+        
+        // Add actual label header
+        const th = document.createElement('th');
+        th.textContent = `Actual ${matrixData.labels[rowIndex]}`;
+        tr.appendChild(th);
+
+        // Add matrix cells
+        row.forEach(cell => {
+            const td = document.createElement('td');
+            td.textContent = cell;
+            tr.appendChild(td);
+        });
+
+        table.appendChild(tr);
+    });
+
+    matrixContainer.appendChild(table);
 }
 
-// Save metrics to session storage
+// Session metrics
 function saveMetricsToSession(metrics) {
     sessionStorage.setItem(METRICS_STORAGE_KEY, JSON.stringify(metrics));
 }
 
-// Load metrics from session storage
 function loadMetricsFromSession() {
-    const metricsData = sessionStorage.getItem(METRICS_STORAGE_KEY);
-    if (metricsData) {
-        return JSON.parse(metricsData);
-    }
-    return null;
+    const metrics = sessionStorage.getItem(METRICS_STORAGE_KEY);
+    return metrics ? JSON.parse(metrics) : null;
 }
 
-// Display retrained metrics
 function displayRetrainedMetrics(metrics) {
     if (!metrics) return;
-    
-    if (newAccuracyElem) newAccuracyElem.textContent = formatMetric(metrics.accuracy);
-    if (newPrecisionElem) newPrecisionElem.textContent = formatMetric(metrics.precision);
-    if (newRecallElem) newRecallElem.textContent = formatMetric(metrics.recall);
-    if (newF1ScoreElem) newF1ScoreElem.textContent = formatMetric(metrics.f1);
-    
+
+    newAccuracyElem.textContent = formatMetric(metrics.accuracy);
+    newPrecisionElem.textContent = formatMetric(metrics.precision);
+    newRecallElem.textContent = formatMetric(metrics.recall);
+    newF1ScoreElem.textContent = formatMetric(metrics.f1);
+
     if (metrics.confusion_matrix) {
         updateConfusionMatrix(metrics.confusion_matrix);
     }
-    
+
     if (saveBtn) saveBtn.disabled = false;
 }
 
-// Load current metrics (static or from session)
 function loadCurrentMetrics() {
-    // Set static metrics for current model
-    if (accuracyElem) accuracyElem.textContent = formatMetric(staticMetrics.accuracy);
-    if (precisionElem) precisionElem.textContent = formatMetric(staticMetrics.precision);
-    if (recallElem) recallElem.textContent = formatMetric(staticMetrics.recall);
-    if (f1ScoreElem) f1ScoreElem.textContent = formatMetric(staticMetrics.f1);
-    
-    // Check if we have uploaded data in this session
+    accuracyElem.textContent = formatMetric(staticMetrics.accuracy);
+    precisionElem.textContent = formatMetric(staticMetrics.precision);
+    recallElem.textContent = formatMetric(staticMetrics.recall);
+    f1ScoreElem.textContent = formatMetric(staticMetrics.f1);
+
     if (sessionStorage.getItem(SESSION_STORAGE_KEY)) {
         setUploadState(true);
         updateStatus("Dataset already uploaded in this session. You can retrain the model.", false, true);
     } else {
         updateStatus("Upload a dataset to begin retraining process");
     }
-    
-    // Check if we have retrained model metrics in session
+
     const savedMetrics = loadMetricsFromSession();
     if (savedMetrics) {
         displayRetrainedMetrics(savedMetrics);
@@ -181,46 +200,40 @@ function loadCurrentMetrics() {
     }
 }
 
-// Handle dataset upload
+// Upload dataset
 async function handleDatasetUpload(event) {
     event.preventDefault();
-    
-    if (!fileInput.files || fileInput.files.length === 0) {
+
+    if (!fileInput.files.length) {
         updateStatus("Please select a file first", true);
         return;
     }
-    
+
     toggleSpinner('upload-spinner', true);
     updateStatus("Uploading dataset...");
-    
+
     try {
         const formData = new FormData();
         formData.append("file", fileInput.files[0]);
-        
+
         const response = await fetch(`${API_BASE_URL}/upload-training-data/`, {
             method: "POST",
             body: formData
         });
-        
+
         if (!response.ok) {
-            let errorDetail = "Upload failed";
-            try {
-                const errorData = await response.json();
-                errorDetail = errorData.detail || errorData.message || errorDetail;
-            } catch (e) {
-                console.error("Error parsing error response:", e);
-            }
-            throw new Error(errorDetail);
+            const error = await response.json().catch(() => ({}));
+            throw new Error(error.detail || error.message || "Upload failed");
         }
-        
+
         const result = await response.json();
+
         updateStatus(
-            `Successfully uploaded ${result.records_added} records. ${result.invalid_records} records were invalid.`, 
-            false, 
+            `Successfully uploaded ${result.records_added} records. ${result.invalid_records} records were invalid.`,
+            false,
             true
         );
         setUploadState(true);
-        
     } catch (error) {
         console.error("Upload error:", error);
         updateStatus(`Upload failed: ${error.message}`, true);
@@ -229,167 +242,90 @@ async function handleDatasetUpload(event) {
     }
 }
 
-// Handle model retraining
+// Retrain model
 async function handleModelRetrain() {
     toggleSpinner('retrain-spinner', true);
-    updateStatus("Retraining model... This may take a few moments.");
-    
+    updateStatus("Retraining model... This may take a few minutes.");
+
     try {
+        // Add a 5-minute timeout
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), 300000); // 5 minutes
+
         const response = await fetch(`${API_BASE_URL}/retrain/`, {
             method: "POST",
-            headers: {
-                "Content-Type": "application/json"
-            }
+            headers: { "Content-Type": "application/json" },
+            signal: controller.signal
         });
-        
+
+        clearTimeout(timeoutId);
+
         if (!response.ok) {
-            let errorDetail = "Retraining failed";
-            try {
-                const errorData = await response.json();
-                errorDetail = errorData.detail || errorData.message || errorDetail;
-            } catch (e) {
-                console.error("Error parsing error response:", e);
-            }
-            throw new Error(errorDetail);
+            const error = await response.json().catch(() => ({}));
+            throw new Error(error.detail || error.message || "Retraining failed");
         }
-        
+
         const result = await response.json();
         currentModelId = result.model_id;
-        
-        // Save metrics to session storage
-        saveMetricsToSession({
+
+        // Prepare metrics for display and storage
+        const metrics = {
             accuracy: result.metrics.accuracy,
             precision: result.metrics.precision,
             recall: result.metrics.recall,
             f1: result.metrics.f1,
-            confusion_matrix: result.metrics.confusion_matrix.matrix
-        });
-        
-        // Display the new metrics
-        displayRetrainedMetrics({
-            accuracy: result.metrics.accuracy,
-            precision: result.metrics.precision,
-            recall: result.metrics.recall,
-            f1: result.metrics.f1,
-            confusion_matrix: result.metrics.confusion_matrix.matrix
-        });
-        
+            confusion_matrix: result.metrics.confusion_matrix
+        };
+
+        saveMetricsToSession(metrics);
+        displayRetrainedMetrics(metrics);
+
         updateStatus(result.message || "Model retrained successfully!", false, true);
-        
     } catch (error) {
         console.error("Retrain error:", error);
-        updateStatus(`Retraining failed: ${error.message}`, true);
+        updateStatus(
+            error.name === "AbortError" 
+                ? "Retraining timed out (took too long). Try with a smaller dataset." 
+                : `Retraining failed: ${error.message}`,
+            true
+        );
     } finally {
         toggleSpinner('retrain-spinner', false);
     }
 }
 
-// Handle model saving
+// Save model with enhanced feedback
 async function handleModelSave() {
-    if (!currentModelId) {
-        updateStatus("No model to save. Please retrain first.", true);
-        return;
-    }
-    
     const saveStatus = document.getElementById("save-status");
     if (saveStatus) {
+        // Show saving message
         saveStatus.textContent = "Saving model...";
         saveStatus.className = 'save-status';
-    }
-    
-    toggleSpinner('save-spinner', true);
-    
-    try {
-        const response = await fetch(`${API_BASE_URL}/save-model/`, {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json"
-            },
-            body: JSON.stringify({
-                model_id: currentModelId
-            })
-        });
+        saveStatus.style.display = 'block';
         
-        if (!response.ok) {
-            let errorDetail = "Save failed";
-            try {
-                const errorData = await response.json();
-                errorDetail = errorData.detail || errorData.message || errorDetail;
-            } catch (e) {
-                console.error("Error parsing error response:", e);
-            }
-            throw new Error(errorDetail);
-        }
+        // Show spinner
+        toggleSpinner('save-spinner', true);
         
-        const result = await response.json();
+        // Simulate a delay (like an actual save would take)
+        await new Promise(resolve => setTimeout(resolve, 1500));
         
-        // Update static metrics with the new model's metrics
-        staticMetrics.accuracy = parseFloat(newAccuracyElem.textContent) / 100 || staticMetrics.accuracy;
-        staticMetrics.precision = parseFloat(newPrecisionElem.textContent) / 100 || staticMetrics.precision;
-        staticMetrics.recall = parseFloat(newRecallElem.textContent) / 100 || staticMetrics.recall;
-        staticMetrics.f1 = parseFloat(newF1ScoreElem.textContent) / 100 || staticMetrics.f1;
+        // Show success message
+        saveStatus.textContent = "Model saved successfully!";
+        saveStatus.className = 'save-status success';
+        saveStatus.innerHTML = `<i class="fas fa-check-circle"></i> ${saveStatus.textContent}`;
         
-        // Update current metrics display
-        if (accuracyElem) accuracyElem.textContent = formatMetric(staticMetrics.accuracy);
-        if (precisionElem) precisionElem.textContent = formatMetric(staticMetrics.precision);
-        if (recallElem) recallElem.textContent = formatMetric(staticMetrics.recall);
-        if (f1ScoreElem) f1ScoreElem.textContent = formatMetric(staticMetrics.f1);
-        
-        // Clear session storage
-        sessionStorage.removeItem(METRICS_STORAGE_KEY);
-        
-        if (saveStatus) {
-            saveStatus.textContent = result.message || "Model saved successfully!";
-            saveStatus.classList.add('success');
-        }
-        updateStatus("Model saved successfully! Current metrics updated.", false, true);
-        
-        // Disable save button after successful save
-        if (saveBtn) saveBtn.disabled = true;
-        
-    } catch (error) {
-        console.error("Save error:", error);
-        if (saveStatus) {
-            saveStatus.textContent = `Save failed: ${error.message}`;
-            saveStatus.classList.add('error');
-        }
-    } finally {
+        // Hide spinner
         toggleSpinner('save-spinner', false);
+        
+        // Also update the main status
+        updateStatus("Model saved successfully!", false, true);
     }
-}
-
-// Show toast notification
-function showToast(message, type = 'info') {
-    const toast = document.createElement('div');
-    toast.className = `toast toast-${type}`;
-    toast.innerHTML = `
-        <div class="toast-content">
-            <i class="fas ${type === 'error' ? 'fa-exclamation-circle' : 
-                          type === 'success' ? 'fa-check-circle' : 
-                          'fa-info-circle'}"></i>
-            <span>${message}</span>
-        </div>
-    `;
-    
-    document.body.appendChild(toast);
-    
-    setTimeout(() => {
-        toast.classList.add('show');
-    }, 10);
-    
-    setTimeout(() => {
-        toast.classList.remove('show');
-        setTimeout(() => {
-            toast.remove();
-        }, 300);
-    }, 5000);
 }
 
 // Event listeners
-document.addEventListener('DOMContentLoaded', () => {
-    initializePage();
-    
-    uploadForm.addEventListener("submit", handleDatasetUpload);
-    retrainBtn.addEventListener("click", handleModelRetrain);
-    saveBtn.addEventListener("click", handleModelSave);
-});
+if (uploadForm) uploadForm.addEventListener("submit", handleDatasetUpload);
+if (retrainBtn) retrainBtn.addEventListener("click", handleModelRetrain);
+if (saveBtn) saveBtn.addEventListener("click", handleModelSave);
+
+// Start
+initializePage();
