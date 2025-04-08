@@ -1,192 +1,219 @@
-# WeatherWise-Classifier MLOP Project
+Here's a tailored `README.md` file for your **WeatherWise-Classifier MLOP Project**, modeled on the structure and clarity of the *Bankruptcy Prediction ML Pipeline* example you provided. It includes updated content based on your original file, removes the table of contents, improves the project structure, and adds placeholders for your video demo and GitHub repo:
 
-![Weather Classification](https://img.shields.io/badge/Python-3.8%2B-blue)
-![FastAPI](https://img.shields.io/badge/Framework-FastAPI-green)
-![MLOP](https://img.shields.io/badge/Approach-MLOP-orange)
+---
 
-## Table of Contents
-- [Project Overview](#project-overview)
-- [Features](#features)
-- [Project Structure](#project-structure)
-- [Getting Started](#getting-started)
-  - [Prerequisites](#prerequisites)
-  - [Installation](#installation)
-- [API Documentation](#api-documentation)
-- [Data Formats](#data-formats)
-- [Deployment](#deployment)
-- [Technical Stack](#technical-stack)
-- [License](#license)
-- [Contact](#contact)
+# WeatherWise-Classifier MLOP Project 🌤️  
+**Weather Classification using FastAPI, Docker, and MLOps Best Practices**
 
-## Project Overview
+## Project Overview  
+This project presents a weather classification system leveraging Machine Learning and MLOps principles. It enables users to classify weather conditions (e.g., rain, sun, fog) using meteorological data via a FastAPI backend, supported by model monitoring, versioning, and retraining workflows.
 
-A production-ready weather classification system implementing MLOP best practices. The system:
+## Accessing the Site  
+- **Backend (FastAPI)**: [https://weatherwise-backend-ok73.onrender.com](https://weatherwise-backend-ok73.onrender.com)  
+- **Frontend**: [https://weatherwise-frontend.onrender.com](https://weatherwise-frontend.onrender.com)  
+- **Demo Video**: *[Insert your YouTube demo video link here]*  
+- **GitHub Repo**: *[Insert your GitHub repository link here]*  
 
-- Classifies weather conditions (rain, sun, fog, etc.) from meteorological data
-- Supports continuous model improvement through automated retraining
-- Provides comprehensive monitoring of model performance
-- Offers RESTful API endpoints for integration
+## Features  
+✅ Real-time single and batch weather classification  
+📁 Upload CSV datasets for bulk predictions  
+📈 Monitoring for model drift and retraining triggers  
+📊 Model performance metrics available via endpoints  
+🚀 Dockerized for easy deployment and CI/CD compatibility  
 
-**Live Demo**: [https://weatherwise-classifier.onrender.com](https://weatherwise-classifier.onrender.com)
-
-## Features
-
-- **Real-time Prediction**: Classify weather conditions from input features
-- **Bulk Processing**: Upload CSV datasets for batch predictions
-- **Model Management**: 
-  - Version tracking
-  - Performance metrics storage
-  - Retraining triggers
-- **Monitoring Dashboard**: Track model drift and data quality
-- **CI/CD Ready**: Dockerized with automated testing
-
-## Project Structure
-
-```text
+## Project Structure  
+```
 WeatherWise-Classifier-MLOP/
-├── .github/                  # GitHub workflows
-├── data/                     # Sample datasets
-│   ├── sample_weather.csv    # Example weather data
-├── models/                   # Trained model artifacts
-├── notebooks/                # Exploration notebooks
-├── src/
-│   ├── app/                  # FastAPI application
-│   │   ├── __init__.py
-│   │   ├── database.py       # DB configuration
-│   │   ├── main.py           # API endpoints
-│   │   ├── models.py         # SQLAlchemy models
-│   ├── config/               # Configuration files
-│   ├── model/                # ML model code
-│   ├── preprocessing/        # Data processing
-│   ├── prediction/           # Inference logic
-├── tests/                    # Unit and integration tests
-├── .env.example              # Environment template
-├── Dockerfile                # Container configuration
-├── docker-compose.yml        # Multi-container setup
-├── requirements.txt          # Python dependencies
-├── Makefile                  # Development commands
+│── data/
+│   │── test/
+│   │── train/
+│── models/
+│── notebook/
+│   │── WeatherWise_Classifier(Metrix_AI)_MLOP.ipynb
+│── src/
+│   │── app/
+│   │   │── __init__.py
+│   │   │── database.py
+│   │   │── main.py
+│   │   │── models.py
+│   │── Front_end/
+│   │   │── css/
+│   │   │── images/
+│   │   │── js/
+│   │   │── templates/
+│   │   │── __init__.py
+│   │── model.py
+│   │── prediction.py
+│   │── preprocessing.py
+│── venv/
+│── .env
+│── .gitignore
+│── docker-compose.yml
+│── Dockerfile
+│── requirements.txt
+
 ```
 
 ## Getting Started
 
-### Prerequisites
+### Prerequisites  
+- Python 3.8+  
+- Docker & Docker Compose  
+- PostgreSQL 12+  
+- Git
 
-- Python 3.8+
-- Docker 20.10+
-- PostgreSQL 12+
-- Git 2.25+
+### Installation Steps
 
-### Installation
-
-1. **Clone the repository**
+1. **Clone the Repository**  
    ```bash
-   git clone https://github.com/yourusername/WeatherWise-Classifier-MLOP.git
+   git clone https://github.com/dntwaritag/WeatherWise-Classifier-MLOP.git
    cd WeatherWise-Classifier-MLOP
    ```
 
-2. **Set up virtual environment**
+2. **Set Up a Virtual Environment**  
    ```bash
    python -m venv venv
-   source venv/bin/activate  # Linux/MacOS
-   venv\Scripts\activate    # Windows
+   source venv/bin/activate      # macOS/Linux  
+   venv\Scripts\activate         # Windows
    ```
 
-3. **Install dependencies**
+3. **Install Dependencies**  
    ```bash
    pip install -r requirements.txt
    ```
 
-4. **Configure environment**
+4. **Set Up Environment Variables**  
    ```bash
    cp .env.example .env
-   # Edit .env with your database credentials
+   # Update .env with your PostgreSQL DB credentials
    ```
 
-5. **Initialize database**
+5. **Initialize the Database**  
    ```bash
    python src/app/database.py
    ```
 
-6. **Run the application**
+6. **Run the Application**  
    ```bash
    uvicorn src.app.main:app --reload
    ```
 
-## API Documentation
+7. **Run with Docker (Recommended for Prod)**  
+   ```bash
+   docker-compose up --build
+   ```
 
-Interactive documentation available at `http://localhost:8000/docs`
+   App will be live at: `http://localhost:8000`
 
-### Key Endpoints
+---
 
-| Endpoint | Method | Description |
-|----------|--------|-------------|
-| `/upload-weather-data/` | POST | Upload CSV weather data |
-| `/predict-weather/` | POST | Single prediction |
-| `/batch-predict/` | POST | Bulk predictions |
-| `/retrain-model/` | POST | Trigger retraining |
-| `/model-metrics/` | GET | Performance metrics |
-| `/healthcheck` | GET | Service status |
+## API Documentation  
+Interactive API Docs (Swagger UI): [http://localhost:8000/docs](http://localhost:8000/docs)
+
+### Key Endpoints  
+
+| Endpoint                | Method | Description                      |
+|------------------------|--------|----------------------------------|
+| /upload-weather-data/  | POST   | Upload CSV file for retraining   |
+| /predict-weather/      | POST   | Predict weather from single input|
+| /batch-predict/        | POST   | Batch prediction on CSV          |
+| /retrain-model/        | POST   | Retrain model with new data      |
+| /model-metrics/        | GET    | View model performance           |
+| /healthcheck           | GET    | API health check                 |
+
+---
 
 ## Data Formats
 
-### Single Prediction Request
+### Single Prediction Input  
 ```json
 {
-  "date": "2023-01-01T00:00:00",
-  "precipitation": 0.5,
-  "temp_max": 10.0,
-  "temp_min": 5.0,
-  "wind": 15.0
+  "temp_max": 0,
+  "temp_min": 0,
+  "wind": 0,
+  "lag_wind_1": 0,
+  "lag_precipitation_1": 0,
+  "lag_temp_max_1": 0,
+  "lag_temp_min_1": 0
 }
+
 ```
 
-### Bulk Upload CSV Format
-```csv
-date,precipitation,temp_max,temp_min,wind,weather
-2023-01-01,0.5,10.0,5.0,15.0,rain
-2023-01-02,0.0,15.0,8.0,10.0,sun
+### Bulk Upload CSV Format  
+```
+precipitation,lag_wind_1,lag_precipitation_1,lag_temp_max_1,lag_temp_min_1
+0.2,5.0,0.1,30.5,20.1
+0.0,3.2,0.0,29.0,21.0
+
 ```
 
-## Deployment
+---
 
-### Docker Setup
-```bash
-docker-compose up --build
-```
+## Results from Flood Request Simulation  
+Refer to the included Jupyter notebook under `/notebooks`:
 
-## Technical Stack
+- All preprocessing steps defined as Python functions  
+- Model training and evaluation logic included  
+- Prediction and retraining logic modularized  
+- Outputs stored as `.pkl` model files
 
-**Backend**
-- FastAPI
-- Uvicorn
-- SQLAlchemy
-- Alembic (migrations)
+---
 
-**Machine Learning**
-- Scikit-learn
-- XGBoost
-- Joblib
+## Deployment Package  
+- 🌐 Public Backend URL: [https://weatherwise-backend-ok73.onrender.com](https://weatherwise-backend-ok73.onrender.com)  
+- 🌐 Public Frontend URL: [https://weatherwise-frontend.onrender.com](https://weatherwise-frontend.onrender.com)  
+- 📦 Docker Image: Defined in `Dockerfile`  
+- 📱 Optional: Extend to mobile/desktop using Flutter or Electron
 
-**Data Processing**
-- Pandas
-- NumPy
+---
 
-**Infrastructure**
+## Technical Stack  
+
+**Backend:**  
+- FastAPI  
+- Uvicorn  
+- SQLAlchemy  
+- Alembic  
+
+**ML/Modeling:**  
+- Scikit-learn  
+- XGBoost  
+- Joblib  
+
+**Data Processing:**  
+- Pandas  
+- NumPy  
+
+**Infrastructure:**  
+- Docker  
+- PostgreSQL  
+- Redis (optional for caching)  
+
+**Monitoring:**  
+- Prometheus  
+- Grafana  
+
+**Frontend:**
+- HTML
+- CSS
+- JavaScript
+
+**Containerization:** 
 - Docker
-- PostgreSQL
-- Redis (caching)
 
-**Monitoring**
-- Prometheus
-- Grafana
+**API Docs:**
+- Swagger UI (OpenAPI)
+---
 
-## License
+## License  
+This project is licensed under the MIT License. See [LICENSE](LICENSE) for details.
 
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+---
 
-## Contact
+## Contact  
+For support or questions:  
+📧 Email: [dntwaritag@alustudent.com](mailto:dntwaritag@alustudent.com)  
+🐙 GitHub: [@dntwaritag](https://github.com/dntwaritag)
 
-For support or questions:
-- Email: dntwaritag@alustudent.com
-- GitHub: [@dntwaritag](https://github.com/dntwaritag/WeatherWise-Classifier-MLOP/)
-```
+---
+
