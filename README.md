@@ -7,7 +7,7 @@ This project presents a weather classification system leveraging Machine Learnin
 ## Accessing the Site  
 - **Backend (FastAPI)**: [Weatherwise-backend](https://weatherwise-backend-ok73.onrender.com)  
 - **Frontend**: [Weatherwise-frontend](https://weatherwise-frontend-prjt.onrender.com) 
-- **Demo Video**: *[Insert YouTube demo video link here]*  
+- **Demo Video**: [YouTube demo video](https://youtu.be/vrYKr_w0S00)  
 - **GitHub Repo**: *[GitHub-repository](https://github.com/dntwaritag/WeatherWise-Classifier-MLOP.git)*  
 
 ## Features  
