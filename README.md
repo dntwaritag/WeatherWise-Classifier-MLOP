@@ -136,14 +136,6 @@ Interactive API Docs (Swagger UI): [http://localhost:8000/docs](http://localhost
 
 ```
 
-### Bulk Upload CSV Format  
-```
-precipitation,lag_wind_1,lag_precipitation_1,lag_temp_max_1,lag_temp_min_1
-0.2,5.0,0.1,30.5,20.1
-0.0,3.2,0.0,29.0,21.0
-
-```
-
 ---
 
 ## Results from Flood Request Simulation  
