@@ -1,5 +1,4 @@
 ---
-
 # WeatherWise-Classifier MLOP Project 🌤️  
 **Weather Classification using FastAPI, Docker, and MLOps Best Practices**
 
